@@ -1,0 +1,33 @@
+# ─── Node ───────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun.lockb
+
+# ─── Angular Build Output ───────────────────────────────
+dist/
+.angular/
+
+# ─── Environment / Secrets ──────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ─── OS ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── IDE ─────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# ─── Testing ─────────────────────────────────────────────
+coverage/
+
+# ─── Misc ────────────────────────────────────────────────
+*.log
+*.zip
+*.tar.gz
