@@ -61,7 +61,7 @@ export function formatClock(time: string): string {
   return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
 }
 
-function arcSummary(data: ArcData): ArcSummary {
+export function arcSummary(data: ArcData): ArcSummary {
   const { arc } = data;
   return {
     id: arc.id,

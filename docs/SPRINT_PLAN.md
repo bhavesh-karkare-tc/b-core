@@ -1,7 +1,7 @@
 # B-Core Winter Arc — Sprint Plan
 
 Status legend: [ ] todo · [~] in progress · [x] done
-Current sprint: **Sprint 1**
+Current sprint: **Sprint 2**
 
 ## Phase 1 — Web UI prototype with mock data
 
@@ -26,8 +26,8 @@ Current sprint: **Sprint 1**
 - **Done when:** all engine tests pass, 100% of engine exports covered by tests
 
 ### Sprint 2 · Mock data layer + Today
-- [ ] `data/types.ts`, `data/index.ts` with async functions (getActiveArc, getToday, logHabit, setHabitValue, closeDay, markSickDay…)
-- [ ] Mock implementation with seeded October data (Day 23 scenario) persisted to localStorage
+- [x] `data/types.ts`, `data/index.ts` with async functions (getActiveArc, getToday, logHabit, setHabitValue, closeDay, markSickDay…)
+- [x] Mock implementation with seeded October data (Day 23 scenario) persisted to localStorage
 - [ ] Today screen: header, chapter progress, score ring, streak pill, habit rows for all 5 types
 - [ ] Status sheet / count keypad / time entry / checklist interactions
 - [ ] Close the day sheet; banners: at risk, shielded, yesterday unlogged, sick day, broken
