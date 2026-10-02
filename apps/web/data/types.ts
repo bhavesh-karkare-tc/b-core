@@ -324,7 +324,9 @@ export type CloseDaySummary = {
   effect: StreakEffect;
 };
 
-export type DashboardFilter = { kind: "arc" } | { kind: "chapter"; index: number };
+/** "current" resolves to the chapter containing today (mobile default). */
+export type DashboardFilter =
+  { kind: "arc" } | { kind: "chapter"; index: number } | { kind: "current" };
 
 export type HeatCell = {
   date: ISODate;
@@ -367,7 +369,8 @@ export type DashboardView =
       dayNumber: number;
       /** Share of the arc elapsed, 0–1. */
       progress: number;
-      filter: DashboardFilter;
+      /** The filter actually applied ("current" is resolved to a chapter). */
+      filter: Exclude<DashboardFilter, { kind: "current" }>;
       chapters: TrackerChapter[];
       /** Section A: always the current state, not filtered. */
       tiles: {

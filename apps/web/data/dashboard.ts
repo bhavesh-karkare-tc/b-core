@@ -91,9 +91,17 @@ export function buildDashboardView(
     days: c.days,
     started: today >= c.startDate,
   }));
-  const filtered =
-    filter.kind === "chapter" ? chapters.find((c) => c.index === filter.index) : undefined;
-  const effectiveFilter: DashboardFilter = filtered ? filter : { kind: "arc" };
+  const currentChapter = chapterFor(chapters, lastDate) ?? chapters[0];
+  const wanted =
+    filter.kind === "current"
+      ? currentChapter?.index
+      : filter.kind === "chapter"
+        ? filter.index
+        : undefined;
+  const filtered = wanted === undefined ? undefined : chapters.find((c) => c.index === wanted);
+  const effectiveFilter: Exclude<DashboardFilter, { kind: "current" }> = filtered
+    ? { kind: "chapter", index: filtered.index }
+    : { kind: "arc" };
   const range = filtered
     ? { start: filtered.startDate, end: filtered.endDate }
     : { start: arc.startDate, end: arcEnd };
@@ -101,7 +109,6 @@ export function buildDashboardView(
   const rangeFinal = finalDays.filter(inRange);
 
   // Section A tiles.
-  const currentChapter = chapterFor(chapters, lastDate) ?? chapters[0];
   const [chapterTotal] = currentChapter ? chapterTotals(days, [currentChapter]) : [];
   const reachedInChapter = currentChapter
     ? days.filter((d) => d.date >= currentChapter.startDate && d.date <= currentChapter.endDate)

@@ -138,6 +138,10 @@ describe("filters and states", () => {
     expect(view.habits.every((h) => h.counted <= 22)).toBe(true);
   });
 
+  it('"current" resolves to the chapter containing today', () => {
+    expect(dashboard("day23", { kind: "current" }).filter).toEqual({ kind: "chapter", index: 1 });
+  });
+
   it("an unknown chapter falls back to the whole arc", () => {
     expect(dashboard("day23", { kind: "chapter", index: 9 }).filter).toEqual({ kind: "arc" });
   });
