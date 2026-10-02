@@ -2,20 +2,13 @@
 
 import { Input } from "@b-core/ui/components/input";
 import { useState, type ComponentProps } from "react";
+import { parseNumber } from "./parse-number";
 
 type NumberInputProps = Omit<ComponentProps<"input">, "value" | "onChange" | "type"> & {
   value: number | null;
   onValueChange: (value: number | null) => void;
   decimals?: boolean;
 };
-
-/** Parse typed text: comma or dot decimals; empty → null. */
-export function parseNumber(raw: string, decimals: boolean): number | null {
-  const cleaned = raw.replace(",", ".").replace(decimals ? /[^\d.]/g : /\D/g, "");
-  if (cleaned === "" || cleaned === ".") return null;
-  const n = Number(cleaned);
-  return Number.isFinite(n) ? n : null;
-}
 
 /**
  * Numeric text field that keeps what the user typed ("78." stays "78.") and reports the

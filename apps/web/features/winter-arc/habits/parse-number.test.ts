@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseNumber } from "./number-input";
+import { parseNumber } from "./parse-number";
 
 describe("parseNumber", () => {
   it("keeps decimals and accepts a comma", () => {
