@@ -14,6 +14,7 @@ export * from "./habit-streak";
 export * from "./rank";
 export * from "./schedule";
 export * from "./scoring";
+export * from "./setup";
 export * from "./sick";
 export * from "./status";
 export * from "./templates";

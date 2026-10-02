@@ -15,6 +15,10 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | R2 | A sick day inside a weak run (weak → sick → weak) | A sick day is skipped as if it didn't exist, so this counts as two weak days in a row. The same applies to the 7-strong-days shield count and to habit streaks. | `arc-streak.ts`, `habit-streak.ts` |
 | R3 | Count/checklist between minimum and target before cutoff (e.g. 2,400 ml at 3 pm) | Shown as a **provisional Minimum** (5 points, `provisional: true`). It becomes final at cutoff. Below the minimum stays pending (0 points). | `status.ts` |
 | R4 | "X days per week" schedule | **Rest while you still can**, decided one day at a time. An unlogged day becomes Rest if `Done/Minimum so far this week + days left in the week after it ≥ X`; otherwise it is required and turns Missed at cutoff. Weeks run Monday–Sunday. In a partial first/last arc week, X is capped at the arc days in that week. Before cutoff a slack day shows as provisional Rest. | `schedule.ts` (`perWeekRestEligible`), `evaluate.ts` |
+| R5 | Body check photo (setup step 7) | Deferred to Phase 2. The field shows disabled ("Photos arrive with sync"); weight, waist, push-ups and energy work now. | `features/winter-arc/setup` |
+| R6 | Commitment screen | Both: typing your name enables "I commit" (the accessible path), and holding the button for 1.5 s also commits. | `features/winter-arc/setup` |
+| R7 | Editing a habit before the Day 3 lock | Retroactive: the habit simply changes and Days 1–3 re-score. After lock only rename and reminder change (TC08); target changes wait for a new chapter (E7). | `setup.ts` (`isHabitFieldEditable`), `data/mock/api.ts` |
+| R8 | Setup while an arc is active (TC09) | Setup opens with an abandon dialog. Abandoning keeps the old arc as a read-only past arc (E15). | `data/mock/api.ts` (`abandonArc`) |
 
 ## Engineering assumptions
 
