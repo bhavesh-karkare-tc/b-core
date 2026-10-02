@@ -1,7 +1,7 @@
 # B-Core Winter Arc — Sprint Plan
 
 Status legend: [ ] todo · [~] in progress · [x] done
-Current sprint: **Sprint 0**
+Current sprint: **Sprint 1**
 
 ## Phase 1 — Web UI prototype with mock data
 
@@ -16,7 +16,7 @@ Current sprint: **Sprint 0**
 - **Done when:** app runs locally, shell + empty pages render in Night Ice theme, CI green
 
 ### Sprint 1 · arc-engine (pure logic)
-- [ ] Domain types (Arc, Chapter, Habit, HabitVersion, DayLog, HabitEntry, StreakState, BodyCheck)
+- [x] Domain types (Arc, Chapter, Habit, HabitVersion, DayLog, HabitEntry, StreakState, BodyCheck)
 - [ ] Status resolution per habit type incl. cutoff rules (count/time/checklist min vs target)
 - [ ] Daily score, strong day, weekly/chapter/arc totals, completion %
 - [ ] Arc streak state machine (safe, at_risk, shielded, broken), shields, sick days
