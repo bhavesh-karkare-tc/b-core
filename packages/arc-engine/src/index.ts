@@ -13,6 +13,7 @@ export * from "./evaluate";
 export * from "./habit-streak";
 export * from "./insights";
 export * from "./rank";
+export * from "./reports";
 export * from "./schedule";
 export * from "./scoring";
 export * from "./setup";

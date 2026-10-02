@@ -22,6 +22,9 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | R9 | Habit Detail (screen #15) | Built in Sprint 5 with the dashboard; habit bars open it. | `features/winter-arc/habit-detail` |
 | R10 | Day-of-week insight | Shown when the weakest weekday averages 10+ points below the other days, on finalised counted days, with at least 2 samples of that weekday. | `insights.ts` (`dayOfWeekPattern`) |
 | R11 | Minimum-overuse insight | Minimum on 50%+ of the habit's last 14 finalised scheduled days (needs ≥ 7). | `insights.ts` (`minimumOveruse`) |
+| R12 | Weekly summaries for short weeks | Every Monday–Sunday week touching the arc gets a summary of its arc days only ("Week 1 · 4 days"); its max is 100 × those days. | `reports.ts` (`reportPeriods`) |
+| R13 | Changing the arc timezone (E2) | Shown read-only in module settings; switching arrives in Phase 2, when the server decides cutoffs (E3). | `features/winter-arc/settings` |
+| R14 | Past arcs' reports | Listed read-only in a "Past arcs" section of Reports. An abandoned arc keeps the reports generated before it stopped (E15). | `data/reports.ts` |
 
 ## Engineering assumptions
 
@@ -41,6 +44,7 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | A12 | Demo clock (Phase 1 only) | The mock layer pins "now" (default Fri 23 Oct 2026, 15:00, browser timezone). Demo controls and `?demo=<scenario>` switch scenario or move the clock. Time-habit "Log now" uses this clock, never the device clock (E3). | `data/mock/*` |
 | A13 | Insight unlock and data | Insights unlock on Day 7 (MASTER_DOC: Days 1–6 locked). They read finalised days only, except "today" and streak risk. The weakest-habit insight compares this week with last week by completion %. | `insights.ts` |
 | A14 | Dashboard scope | Section A tiles (today, this week, chapter, arc, streak, rank, strong days) always show the current state. The Arc / chapter filter applies to Section B (heatmap, trend, habit completion, categories). Completion % uses finalised days only, so it doesn't move while today is half-logged. | `data/dashboard.ts` |
+| A15 | Report snapshots | A report is generated the first time it is due (weekly: Monday 12:00 after Sunday's cutoff; monthly: the 1st at 12:00; TC46) and stored; later edits never change it (TC47). A skipped reflection shows "Reflection pending" after 24 hours (no push in Phase 1). Arc final report, weekly challenge and badges are Phase 2 (MASTER_DOC §18). | `reports.ts`, `data/reports.ts` |
 
 ## Open questions
 
