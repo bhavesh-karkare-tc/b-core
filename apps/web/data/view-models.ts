@@ -205,7 +205,7 @@ function dayView(data: ArcData, evaluated: EvaluatedDay, now: Date): DayView {
   };
 }
 
-function streakView(days: readonly EvaluatedDay[]): StreakView {
+export function streakView(days: readonly EvaluatedDay[]): StreakView {
   const { state } = computeArcStreak(days);
   return {
     current: state.current,

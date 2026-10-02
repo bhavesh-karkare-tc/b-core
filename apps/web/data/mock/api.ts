@@ -42,6 +42,8 @@ import {
   type CloseDayInput,
   type CloseDaySummary,
   type CreateArcInput,
+  type DashboardFilter,
+  type DashboardView,
   type DayDetailView,
   type DayView,
   type HabitSettingsView,
@@ -63,6 +65,7 @@ import {
   checklistItems,
   currentHabits,
 } from "../view-models";
+import { buildDashboardView } from "../dashboard";
 import { DEFAULT_SCENARIO, SCENARIOS, type Scenario, type ScenarioId } from "./scenarios";
 import { seedScenario, type MockState } from "./seed";
 import type { KeyValueStore } from "./store";
@@ -214,6 +217,12 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
     async getTracker(chapterIndex?: number): Promise<TrackerView> {
       const state = load();
       return buildTrackerView(activeArc(state), new Date(state.now), chapterIndex);
+    },
+
+    /** Dashboard (MASTER_DOC §10); filter by arc or chapter (TC45). */
+    async getDashboard(filter: DashboardFilter = { kind: "arc" }): Promise<DashboardView> {
+      const state = load();
+      return buildDashboardView(activeArc(state), new Date(state.now), filter);
     },
 
     async getDayDetail(date: ISODate): Promise<DayDetailView | null> {

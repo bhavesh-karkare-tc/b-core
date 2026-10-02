@@ -324,6 +324,76 @@ export type CloseDaySummary = {
   effect: StreakEffect;
 };
 
+export type DashboardFilter = { kind: "arc" } | { kind: "chapter"; index: number };
+
+export type HeatCell = {
+  date: ISODate;
+  dayNumber: number;
+  /** Engine heat level 0–4, "sick", or "future" for days not reached. */
+  level: 0 | 1 | 2 | 3 | 4 | "sick" | "future";
+  score: number | null;
+  isToday: boolean;
+};
+
+export type HabitStatsView = {
+  habitId: string;
+  number: string;
+  name: string;
+  category: Habit["category"];
+  type: Habit["type"];
+  /** Completion over finalised days in the filter, 0–1; null without data. */
+  completion: number | null;
+  done: number;
+  minimum: number;
+  missed: number;
+  rest: number;
+  counted: number;
+  currentStreak: number;
+  bestStreak: number;
+};
+
+export type Insight =
+  | { kind: "streak_risk"; threshold: number; habitsNeeded: number | null }
+  | { kind: "weakest_habit"; habitId: string; name: string; ratio: number; change: number | null }
+  | { kind: "day_of_week"; weekday: string; average: number; othersAverage: number; gap: number }
+  | { kind: "minimum_overuse"; habitId: string; name: string; minimum: number; of: number };
+
+export type DashboardView =
+  | { kind: "no_arc" }
+  | { kind: "countdown"; arc: ArcSummary; daysUntilStart: number }
+  | {
+      kind: "dashboard";
+      arc: ArcSummary;
+      dayNumber: number;
+      /** Share of the arc elapsed, 0–1. */
+      progress: number;
+      filter: DashboardFilter;
+      chapters: TrackerChapter[];
+      /** Section A: always the current state, not filtered. */
+      tiles: {
+        today: { score: number | null; provisional: boolean };
+        week: { average: number | null; change: number | null };
+        chapter: {
+          index: number;
+          label: string;
+          average: number | null;
+          total: number;
+          maxSoFar: number;
+        };
+        arc: { average: number | null; total: number };
+        strongDays: { count: number; finalised: number };
+      };
+      streak: StreakView;
+      rank: { name: RankName; points: number; next: { name: RankName; remaining: number } | null };
+      /** Section B: filtered by arc / chapter. */
+      heatmap: HeatCell[];
+      trend: { date: ISODate; score: number | null; average7: number | null }[];
+      habits: HabitStatsView[];
+      categories: { category: Habit["category"]; completion: number | null; counted: number }[];
+      bodyChecks: BodyCheck[];
+      insights: { unlocked: boolean; unlockDay: number; items: Insight[] };
+    };
+
 /** Day Detail (MASTER_DOC §10): the day, its streak effect and the streak after it. */
 export type DayDetailView = {
   day: DayView;

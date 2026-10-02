@@ -21,6 +21,7 @@ export const getActiveArc = api.getActiveArc;
 export const getToday = api.getToday;
 export const getDay = api.getDay;
 export const getTracker = api.getTracker;
+export const getDashboard = api.getDashboard;
 export const getDayDetail = api.getDayDetail;
 export const getCloseDaySummary = api.getCloseDaySummary;
 export const logHabit = api.logHabit;

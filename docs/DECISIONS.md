@@ -40,6 +40,7 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | A11 | "x of y done" on Today | x = habits logged Done; y = counted habits minus Rest, so a Sunday reads "x of 9". | `data/view-models.ts` |
 | A12 | Demo clock (Phase 1 only) | The mock layer pins "now" (default Fri 23 Oct 2026, 15:00, browser timezone). Demo controls and `?demo=<scenario>` switch scenario or move the clock. Time-habit "Log now" uses this clock, never the device clock (E3). | `data/mock/*` |
 | A13 | Insight unlock and data | Insights unlock on Day 7 (MASTER_DOC: Days 1–6 locked). They read finalised days only, except "today" and streak risk. The weakest-habit insight compares this week with last week by completion %. | `insights.ts` |
+| A14 | Dashboard scope | Section A tiles (today, this week, chapter, arc, streak, rank, strong days) always show the current state. The Arc / chapter filter applies to Section B (heatmap, trend, habit completion, categories). Completion % uses finalised days only, so it doesn't move while today is half-logged. | `data/dashboard.ts` |
 
 ## Open questions
 
