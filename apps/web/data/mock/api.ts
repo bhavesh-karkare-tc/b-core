@@ -7,6 +7,7 @@ import {
   FIELDS_AFTER_LOCK,
   HABIT_FIELDS,
   habitOn,
+  canChangeThreshold,
   isArcLocked,
   isHabitFieldEditable,
   isScheduled,
@@ -17,6 +18,8 @@ import {
   localTime,
   lockDate,
   MIN_HABITS,
+  sickDayAllowance,
+  sickDaysRemaining,
   startDateOptions,
   validateHabitDraft,
   validateHabitList,
@@ -34,9 +37,13 @@ import {
   closeDayInputSchema,
   commitNameSchema,
   habitValuePatchSchema,
+  monthlyReflectionSchema,
+  notificationSettingsSchema,
+  weeklyReflectionSchema,
 } from "../schemas";
 import {
   DataError,
+  type ArcSettingsView,
   type ArcSummary,
   type BodyCheckInput,
   type CloseDayInput,
@@ -49,12 +56,17 @@ import {
   type HabitDetailView,
   type HabitSettingsView,
   type HabitValuePatch,
+  type MonthlyReflection,
+  type NotificationSettings,
+  type ReportDetailView,
+  type ReportsView,
   type SetupContext,
   type SetupDraft,
   type StoredArc,
   type StoredEntry,
   type TodayView,
   type TrackerView,
+  type WeeklyReflection,
 } from "../types";
 import {
   arcSummary,
@@ -68,6 +80,8 @@ import {
 } from "../view-models";
 import { buildDashboardView } from "../dashboard";
 import { buildHabitDetail } from "../habit-detail";
+import { DEFAULT_NOTIFICATIONS } from "../notifications";
+import { buildReportDetail, buildReportsView, ensureReports } from "../reports";
 import { DEFAULT_SCENARIO, SCENARIOS, type Scenario, type ScenarioId } from "./scenarios";
 import { seedScenario, type MockState } from "./seed";
 import type { KeyValueStore } from "./store";
@@ -144,6 +158,22 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
 
   function saveArc(state: MockState, data: StoredArc): void {
     save({ ...state, arcs: state.arcs.map((a) => (a.arc.id === data.arc.id ? data : a)) });
+  }
+
+  /** Generate due report snapshots for every arc and persist them (A15). */
+  function withReports(state: MockState): MockState {
+    const now = new Date(state.now);
+    let changed = false;
+    const arcs = state.arcs.map((a) => {
+      const reports = ensureReports(a, now);
+      if (reports.length === (a.reports ?? []).length) return a;
+      changed = true;
+      return { ...a, reports };
+    });
+    if (!changed) return state;
+    const next = { ...state, arcs };
+    save(next);
+    return next;
   }
 
   /** Resolve the habit on `date` and check the day can take a log for it. */
@@ -488,7 +518,9 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
         ...state,
         activeArcId: null,
         arcs: state.arcs.map((a) =>
-          a.arc.id === data.arc.id ? { ...a, arc: { ...a.arc, status: "abandoned" } } : a,
+          a.arc.id === data.arc.id
+            ? { ...a, arc: { ...a.arc, status: "abandoned" }, abandonedAt: state.now }
+            : a,
         ),
       });
     },
@@ -617,6 +649,125 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
           habit: { ...v.habit, order: habitIds.indexOf(v.habitId) + 1 },
         })),
       });
+    },
+
+    /* ---- Reports (MASTER_DOC §11, A15) ---- */
+
+    /** Reports for the current arc and past arcs; due snapshots are generated and stored first. */
+    async getReports(): Promise<ReportsView> {
+      const state = withReports(load());
+      return buildReportsView(state.arcs, state.activeArcId, new Date(state.now));
+    },
+
+    async getReport(reportId: string): Promise<ReportDetailView | null> {
+      const state = withReports(load());
+      const arc = state.arcs.find((a) => (a.reports ?? []).some((r) => r.id === reportId));
+      return arc ? buildReportDetail(arc, reportId, arc.arc.id !== state.activeArcId) : null;
+    },
+
+    /** Save the user's reflection (one-line win/fix, or the monthly three). Reports stay snapshots. */
+    async saveReflection(
+      reportId: string,
+      reflection: WeeklyReflection | MonthlyReflection,
+    ): Promise<void> {
+      const state = withReports(load());
+      const arc = state.arcs.find((a) => (a.reports ?? []).some((r) => r.id === reportId));
+      const report = arc?.reports?.find((r) => r.id === reportId);
+      if (!arc || !report) throw new DataError("invalid_input", "No such report.");
+      if (arc.arc.id !== state.activeArcId)
+        throw new DataError("not_editable", "Past arcs are read-only.");
+      const savedAt = state.now;
+      let next: typeof report;
+      if (report.type === "weekly") {
+        const parsed = weeklyReflectionSchema.safeParse(reflection);
+        if (!parsed.success)
+          throw new DataError(
+            "invalid_input",
+            parsed.error.issues[0]?.message ?? "Invalid reflection.",
+          );
+        next = { ...report, reflection: parsed.data, reflectionSavedAt: savedAt };
+      } else {
+        const parsed = monthlyReflectionSchema.safeParse(reflection);
+        if (!parsed.success)
+          throw new DataError(
+            "invalid_input",
+            parsed.error.issues[0]?.message ?? "Invalid reflection.",
+          );
+        next = { ...report, reflection: parsed.data, reflectionSavedAt: savedAt };
+      }
+      saveArc(state, {
+        ...arc,
+        reports: (arc.reports ?? []).map((r) => (r.id === reportId ? next : r)),
+      });
+    },
+
+    /** End-of-chapter body check from the monthly review (TC48); dated the chapter's last day. */
+    async saveReportBodyCheck(reportId: string, input: BodyCheckInput): Promise<void> {
+      const state = withReports(load());
+      const arc = activeArc(state);
+      const report = arc?.reports?.find((r) => r.id === reportId);
+      if (!arc || !report || report.type !== "monthly")
+        throw new DataError("invalid_input", "No such monthly review.");
+      const parsed = parseBodyCheck(input);
+      const date = report.periodEnd;
+      saveArc(state, {
+        ...arc,
+        bodyChecks: [
+          ...arc.bodyChecks.filter((b) => b.date !== date),
+          { id: makeId("body"), arcId: arc.arc.id, date, photoUrl: null, ...parsed },
+        ],
+      });
+    },
+
+    /* ---- Settings ---- */
+
+    async getNotificationSettings(): Promise<NotificationSettings> {
+      return load().notificationSettings ?? DEFAULT_NOTIFICATIONS;
+    },
+
+    async saveNotificationSettings(settings: NotificationSettings): Promise<void> {
+      const parsed = notificationSettingsSchema.safeParse(settings);
+      if (!parsed.success)
+        throw new DataError(
+          "invalid_input",
+          parsed.error.issues[0]?.message ?? "Invalid settings.",
+        );
+      save({ ...load(), notificationSettings: settings });
+    },
+
+    async getArcSettings(): Promise<ArcSettingsView> {
+      const { data, now } = current();
+      return {
+        arc: arcSummary(data),
+        myWhy: data.arc.myWhy,
+        locked: isArcLocked(data.arc, now),
+        canChangeThreshold: canChangeThreshold(data.arc, now),
+        sickDaysLeft: sickDaysRemaining(data.arc.durationDays, data.arc.sickDaysUsed),
+        sickDaysTotal: sickDayAllowance(data.arc.durationDays),
+      };
+    },
+
+    /** Threshold only before lock, never retroactive (E18); My Why any time. */
+    async updateArcSettings(patch: { strongThreshold?: number; myWhy?: string }): Promise<void> {
+      const { state, data, now } = current();
+      const next = { ...data.arc };
+      if (
+        patch.strongThreshold !== undefined &&
+        patch.strongThreshold !== data.arc.strongThreshold
+      ) {
+        if (!canChangeThreshold(data.arc, now)) {
+          throw new DataError("locked", "The threshold is locked after Day 3.");
+        }
+        if (!isValidThreshold(patch.strongThreshold))
+          throw new DataError("invalid_input", "Threshold must be 60–100.");
+        next.strongThreshold = patch.strongThreshold;
+      }
+      if (patch.myWhy !== undefined) {
+        const issue = validateMyWhy(patch.myWhy);
+        if (issue) throw new DataError("invalid_input", issue);
+        next.myWhy = patch.myWhy.trim();
+      }
+      saveArc(state, { ...data, arc: next });
     },
 
     /* ---- Demo controls (mock only) ---- */

@@ -9,7 +9,13 @@ import {
   type Arc,
   type Habit,
 } from "@b-core/arc-engine";
-import type { SetupDraft, StoredArc, StoredDayLog, StoredEntry } from "../types";
+import type {
+  NotificationSettings,
+  SetupDraft,
+  StoredArc,
+  StoredDayLog,
+  StoredEntry,
+} from "../types";
 import { scenario, type ScenarioId, type TodayPreset } from "./scenarios";
 
 export type MockState = {
@@ -22,6 +28,8 @@ export type MockState = {
   /** Active arc plus past (completed / abandoned) arcs. */
   arcs: StoredArc[];
   setupDraft: SetupDraft | null;
+  /** Notification settings (UI only in Phase 1); defaults when absent. */
+  notificationSettings?: NotificationSettings;
 };
 
 const ARC_ID = "arc-winter-2026";

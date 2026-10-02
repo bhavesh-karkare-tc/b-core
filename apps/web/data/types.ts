@@ -5,6 +5,8 @@
 import type {
   Arc,
   BodyCheck,
+  MonthlySnapshot,
+  WeeklySnapshot,
   ClockTime,
   DayLog,
   EditWindow,
@@ -63,6 +65,94 @@ export type StoredArc = ArcData & {
   /** Optional free-text target per chapter index. */
   chapterTargets: Record<number, string>;
   commitment: { name: string; committedAt: string } | null;
+  /** Generated report snapshots (A15). */
+  reports?: StoredReport[];
+  /** When the arc was abandoned (E15); reports stop here. */
+  abandonedAt?: string | null;
+};
+
+export type WeeklyReflection = { win: string; fix: string };
+export type MonthlyReflection = { biggestWin: string; fixThis: string; nextTarget: string };
+
+type StoredReportBase = {
+  id: string;
+  arcId: string;
+  index: number;
+  periodStart: ISODate;
+  periodEnd: ISODate;
+  days: number;
+  generatedAt: string;
+  /** Habit names at generation, so later renames don't change the report. */
+  habitNames: Record<string, string>;
+  reflectionSavedAt: string | null;
+};
+
+export type StoredReport =
+  | (StoredReportBase & {
+      type: "weekly";
+      snapshot: WeeklySnapshot;
+      reflection: WeeklyReflection | null;
+    })
+  | (StoredReportBase & {
+      type: "monthly";
+      snapshot: MonthlySnapshot;
+      reflection: MonthlyReflection | null;
+    });
+
+export type ReflectionState = "done" | "empty" | "pending";
+
+export type ReportListItem = {
+  id: string;
+  type: StoredReport["type"];
+  title: string;
+  periodStart: ISODate;
+  periodEnd: ISODate;
+  generatedAt: string;
+  /** Short headline, e.g. "Avg 86 · 6 strong days". */
+  headline: string;
+  /** "pending" = skipped for more than 24 h (shows a reminder once, A15). */
+  reflection: ReflectionState;
+};
+
+export type ReportsView = {
+  current: { arc: ArcSummary; reports: ReportListItem[]; nextDue: string | null } | null;
+  past: { arc: ArcSummary; status: Arc["status"]; reports: ReportListItem[] }[];
+};
+
+export type ReportDetailView = {
+  report: StoredReport;
+  title: string;
+  arc: ArcSummary;
+  /** Past arcs' reports are read-only (R14). */
+  readOnly: boolean;
+  /** Monthly: baseline (start of chapter) and end-of-chapter body checks (TC48). */
+  bodyCheck: { start: BodyCheck | null; end: BodyCheck | null } | null;
+};
+
+export type NotificationType =
+  | "morning_plan"
+  | "habit_reminder"
+  | "close_day"
+  | "streak_risk"
+  | "cutoff_warning"
+  | "report_ready"
+  | "milestone"
+  | "weekly_challenge";
+
+export type NotificationSettings = {
+  types: Record<NotificationType, { enabled: boolean; time: ClockTime | null }>;
+  quietHours: { start: ClockTime; end: ClockTime };
+  dailyCap: number;
+};
+
+export type ArcSettingsView = {
+  arc: ArcSummary;
+  myWhy: string;
+  locked: boolean;
+  /** E18: only before the Day 3 lock. */
+  canChangeThreshold: boolean;
+  sickDaysLeft: number;
+  sickDaysTotal: number;
 };
 
 export type BodyCheckInput = {

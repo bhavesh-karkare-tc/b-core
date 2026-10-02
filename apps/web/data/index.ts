@@ -8,7 +8,14 @@ import { browserStore } from "./mock/store";
 export type * from "./types";
 export { DataError } from "./types";
 export { formatClock } from "./view-models";
-export { bodyCheckInputSchema, closeDayInputSchema, commitNameSchema } from "./schemas";
+export {
+  bodyCheckInputSchema,
+  closeDayInputSchema,
+  commitNameSchema,
+  monthlyReflectionSchema,
+  weeklyReflectionSchema,
+} from "./schemas";
+export { DEFAULT_NOTIFICATIONS, NOTIFICATION_INFO } from "./notifications";
 export type { DemoState } from "./mock/api";
 export type { ScenarioId } from "./mock/scenarios";
 
@@ -44,6 +51,16 @@ export const updateHabit = api.updateHabit;
 export const addHabit = api.addHabit;
 export const removeHabit = api.removeHabit;
 export const reorderHabits = api.reorderHabits;
+
+export const getReports = api.getReports;
+export const getReport = api.getReport;
+export const saveReflection = api.saveReflection;
+export const saveReportBodyCheck = api.saveReportBodyCheck;
+
+export const getNotificationSettings = api.getNotificationSettings;
+export const saveNotificationSettings = api.saveNotificationSettings;
+export const getArcSettings = api.getArcSettings;
+export const updateArcSettings = api.updateArcSettings;
 
 /** Demo controls — mock implementation only. */
 export const demo = {

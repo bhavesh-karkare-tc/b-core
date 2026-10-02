@@ -41,3 +41,19 @@ export const bodyCheckInputSchema = z.object({
 
 /** Commitment signature: the typed name (or "I commit" when held). */
 export const commitNameSchema = z.string().trim().min(1, "Type your name to commit").max(60);
+
+const line = z.string().trim().max(140, "Keep it to one line (140 characters)");
+
+export const weeklyReflectionSchema = z.object({ win: line, fix: line });
+export const monthlyReflectionSchema = z.object({
+  biggestWin: line,
+  fixThis: line,
+  nextTarget: line,
+});
+
+const clock = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm");
+export const notificationSettingsSchema = z.object({
+  types: z.record(z.string(), z.object({ enabled: z.boolean(), time: clock.nullable() })),
+  quietHours: z.object({ start: clock, end: clock }),
+  dailyCap: z.number().int().min(1).max(10),
+});
