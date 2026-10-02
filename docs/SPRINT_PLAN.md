@@ -50,7 +50,7 @@ Current sprint: **Sprint 6**
 
 ### Sprint 6 · Reports + Settings
 - [x] Reports list, weekly summary, monthly review (with body check), reflections
-- [ ] Notification settings (UI only), module settings, abandon arc dialog
+- [x] Notification settings (UI only), module settings, abandon arc dialog
 - **Done when:** all MVP screens (S01–S18) exist with their listed states on mock data
 
 ## Phase 2 — Backend integration (Supabase)

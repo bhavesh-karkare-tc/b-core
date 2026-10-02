@@ -1,21 +1,12 @@
 "use client";
 
 import { Button } from "@b-core/ui/components/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@b-core/ui/components/dialog";
 import { Flag } from "lucide-react";
 import Link from "next/link";
 import { EmptyPage } from "@/components/shell/empty-page";
 import type { ArcSummary } from "@/data";
 import { shortDate } from "../lib/format";
+import { AbandonArcDialog } from "../settings/abandon-arc-dialog";
 
 type Props = { arc: ArcSummary; onAbandon: () => Promise<void> };
 
@@ -31,28 +22,7 @@ export function ActiveArcGate({ arc, onAbandon }: Props) {
         <Button asChild>
           <Link href="/winter-arc/today">Go to Today</Link>
         </Button>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ember">Abandon and start over</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Abandon this arc?</DialogTitle>
-              <DialogDescription>
-                Your logs and reports so far are kept as a read-only past arc. There will be no
-                final arc report, and the streak ends here. This can&apos;t be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="secondary">Keep my arc</Button>
-              </DialogClose>
-              <Button variant="ember" onClick={() => void onAbandon()}>
-                Abandon arc
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AbandonArcDialog label="Abandon and start over" onConfirm={onAbandon} />
       </div>
     </EmptyPage>
   );
