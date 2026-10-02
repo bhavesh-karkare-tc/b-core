@@ -47,6 +47,7 @@ export function ReportScreen({ id }: { id: string }) {
       <div className="flex flex-col gap-4">
         {back}
         <EmptyPage
+          level={1}
           icon={FileX}
           title="Report not found"
           description="It may not be generated yet."

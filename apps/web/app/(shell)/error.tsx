@@ -13,6 +13,7 @@ export default function ShellError({
   return (
     <div role="alert">
       <EmptyPage
+        level={1}
         icon={TriangleAlert}
         title="Something went wrong"
         description="This page could not load. Your data is safe. Try again."

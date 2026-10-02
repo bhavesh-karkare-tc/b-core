@@ -1,4 +1,6 @@
 import { CalendarRange, ListChecks, ShieldAlert } from "lucide-react";
+import type { PastArcView } from "@/data";
+import { shortDate } from "../../lib/format";
 import { ScoringDialog } from "../scoring-dialog";
 
 const CARDS = [
@@ -15,15 +17,19 @@ const CARDS = [
   },
 ];
 
-/** S01 Intro. */
-export function IntroStep() {
+/** S01 Intro: default, or "returning user" when a past arc exists. */
+export function IntroStep({ lastArc }: { lastArc?: PastArcView }) {
   return (
     <>
       <div className="flex flex-col gap-2">
         <p className="font-mono text-xs tracking-[0.16em] text-accent">WINTER ARC</p>
-        <h1 className="text-[36px] leading-none font-extrabold tracking-tight">Start your arc.</h1>
+        <h1 className="text-[36px] leading-none font-extrabold tracking-tight">
+          {lastArc ? "Welcome back." : "Start your arc."}
+        </h1>
         <p className="text-text-muted">
-          A 92-day discipline challenge. Log daily, earn points, protect the streak.
+          {lastArc
+            ? `Your last arc ran ${shortDate(lastArc.startDate)} – ${shortDate(lastArc.endDate)}. Start the next one, or copy its habits on the next step.`
+            : "A 92-day discipline challenge. Log daily, earn points, protect the streak."}
         </p>
       </div>
       <ul className="flex flex-col gap-2">

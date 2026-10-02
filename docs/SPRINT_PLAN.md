@@ -1,7 +1,7 @@
 # B-Core Winter Arc — Sprint Plan
 
 Status legend: [ ] todo · [~] in progress · [x] done
-Current sprint: **Sprint 6**
+Current sprint: **Phase 1 complete** — next: Phase 2 (Supabase), on request
 
 ## Phase 1 — Web UI prototype with mock data
 

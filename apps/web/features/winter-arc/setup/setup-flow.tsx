@@ -72,7 +72,12 @@ export function SetupFlow() {
   if (!state) return <p className="text-text-muted">Loading…</p>;
   if ("error" in state) {
     return (
-      <EmptyPage icon={TriangleAlert} title="Setup could not load" description={state.error}>
+      <EmptyPage
+        level={1}
+        icon={TriangleAlert}
+        title="Setup could not load"
+        description={state.error}
+      >
         <Button variant="secondary" onClick={() => void load()}>
           Try again
         </Button>
@@ -130,7 +135,7 @@ export function SetupFlow() {
     case 1:
       return (
         <SetupShell step={1} primary={{ label: "Start my arc", onClick: () => go(2) }}>
-          <IntroStep />
+          <IntroStep lastArc={ctx.pastArcs[0]} />
         </SetupShell>
       );
 

@@ -14,6 +14,7 @@ type Props = { arc: ArcSummary; onAbandon: () => Promise<void> };
 export function ActiveArcGate({ arc, onAbandon }: Props) {
   return (
     <EmptyPage
+      level={1}
       icon={Flag}
       title="You already have an arc"
       description={`${arc.name} runs ${shortDate(arc.startDate)} to ${shortDate(arc.endDate)}. Finish it, or abandon it to start a new one.`}

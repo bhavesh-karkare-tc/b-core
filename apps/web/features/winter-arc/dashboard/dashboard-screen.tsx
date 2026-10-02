@@ -64,6 +64,7 @@ export function DashboardScreen() {
     return (
       <div role="alert">
         <EmptyPage
+          level={1}
           icon={TriangleAlert}
           title="Dashboard could not load"
           description={state.message}
@@ -78,7 +79,12 @@ export function DashboardScreen() {
   const { view } = state;
   if (view.kind === "no_arc") {
     return (
-      <EmptyPage icon={Flag} title="No arc yet" description="Your dashboard fills in as you log.">
+      <EmptyPage
+        level={1}
+        icon={Flag}
+        title="No arc yet"
+        description="Your dashboard fills in as you log."
+      >
         <Button asChild>
           <Link href="/winter-arc/setup">Start my arc</Link>
         </Button>
@@ -88,6 +94,7 @@ export function DashboardScreen() {
   if (view.kind === "countdown") {
     return (
       <EmptyPage
+        level={1}
         icon={Hourglass}
         title={`Starts in ${view.daysUntilStart} ${view.daysUntilStart === 1 ? "day" : "days"}`}
         description="Your dashboard opens on Day 1."

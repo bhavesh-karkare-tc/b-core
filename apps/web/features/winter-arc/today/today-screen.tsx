@@ -43,7 +43,12 @@ export function TodayScreen() {
   if (state.status === "error") {
     return (
       <div role="alert">
-        <EmptyPage icon={TriangleAlert} title="Today could not load" description={state.message}>
+        <EmptyPage
+          level={1}
+          icon={TriangleAlert}
+          title="Today could not load"
+          description={state.message}
+        >
           <Button variant="secondary" onClick={() => void refresh()}>
             Try again
           </Button>
@@ -57,6 +62,7 @@ export function TodayScreen() {
   if (view.kind === "no_arc") {
     return (
       <EmptyPage
+        level={1}
         icon={Flag}
         title="Start your Winter Arc"
         description="92 days. 10 habits. Never miss two."
@@ -75,6 +81,7 @@ export function TodayScreen() {
   if (view.kind === "completed") {
     return (
       <EmptyPage
+        level={1}
         icon={Trophy}
         title="Arc complete"
         description={`All ${view.arc.durationDays} days are in. Your final report is on the way.`}

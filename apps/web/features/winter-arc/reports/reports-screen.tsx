@@ -39,6 +39,7 @@ export function ReportsScreen() {
     return (
       <div role="alert">
         <EmptyPage
+          level={1}
           icon={TriangleAlert}
           title="Reports could not load"
           description="Try again in a moment."

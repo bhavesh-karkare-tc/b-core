@@ -49,7 +49,12 @@ export function TrackerScreen() {
   if (state.status === "error") {
     return (
       <div role="alert">
-        <EmptyPage icon={TriangleAlert} title="Tracker could not load" description={state.message}>
+        <EmptyPage
+          level={1}
+          icon={TriangleAlert}
+          title="Tracker could not load"
+          description={state.message}
+        >
           <Button variant="secondary" onClick={() => void reload()}>
             Try again
           </Button>
@@ -62,6 +67,7 @@ export function TrackerScreen() {
   if (view.kind === "no_arc") {
     return (
       <EmptyPage
+        level={1}
         icon={Flag}
         title="No arc yet"
         description="Your month grid fills in as you log each day."
