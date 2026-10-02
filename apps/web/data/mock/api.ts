@@ -42,6 +42,7 @@ import {
   type CloseDayInput,
   type CloseDaySummary,
   type CreateArcInput,
+  type DayDetailView,
   type DayView,
   type HabitSettingsView,
   type HabitValuePatch,
@@ -50,13 +51,17 @@ import {
   type StoredArc,
   type StoredEntry,
   type TodayView,
+  type TrackerView,
 } from "../types";
 import {
   arcSummary,
   buildCloseDaySummary,
   buildDayView,
+  buildDayDetail,
   buildTodayView,
+  buildTrackerView,
   checklistItems,
+  currentHabits,
 } from "../view-models";
 import { DEFAULT_SCENARIO, SCENARIOS, type Scenario, type ScenarioId } from "./scenarios";
 import { seedScenario, type MockState } from "./seed";
@@ -179,17 +184,6 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
     saveArc(state, { ...data, entries });
   }
 
-  /** Current habits of the active arc (latest version each), in display order. */
-  function currentHabits(data: StoredArc): Habit[] {
-    const ids = [...new Set(data.habitVersions.map((v) => v.habitId))];
-    return ids
-      .map((id) => {
-        const versions = data.habitVersions.filter((v) => v.habitId === id);
-        return versions.reduce((a, b) => (b.validFrom >= a.validFrom ? b : a)).habit;
-      })
-      .sort((a, b) => a.order - b.order);
-  }
-
   function assertValidDraft(draft: HabitDraft): void {
     const issue = validateHabitDraft(draft)[0];
     if (issue) throw new DataError("invalid_input", `${draft.name || "Habit"}: ${issue.message}`);
@@ -214,6 +208,17 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
     async getToday(): Promise<TodayView> {
       const state = load();
       return buildTodayView(activeArc(state), new Date(state.now));
+    },
+
+    /** Month tracker for a chapter (defaults to the chapter containing today). */
+    async getTracker(chapterIndex?: number): Promise<TrackerView> {
+      const state = load();
+      return buildTrackerView(activeArc(state), new Date(state.now), chapterIndex);
+    },
+
+    async getDayDetail(date: ISODate): Promise<DayDetailView | null> {
+      const { data, now } = current();
+      return buildDayDetail(data, date, now);
     },
 
     async getDay(date: ISODate): Promise<DayView | null> {

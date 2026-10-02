@@ -7,20 +7,24 @@ import {
   arcPoints,
   canUseSickDay,
   chapterFor,
+  chapterTotals,
   computeArcStreak,
   dayNumber,
   diffDays,
   editWindow,
+  eachDay,
   evaluateArc,
   generateChapters,
   habitOn,
   habitsNeededForStrong,
   hasArcStarted,
   isArcComplete,
+  isScheduled,
   localDate,
   nextRank,
   rankFor,
   sickDaysRemaining,
+  weekday,
   type EvaluatedDay,
   type Habit,
   type HabitVersion,
@@ -33,6 +37,7 @@ import type {
   Banner,
   ChapterView,
   CloseDaySummary,
+  DayDetailView,
   DayView,
   HabitRowView,
   QuickAction,
@@ -40,6 +45,10 @@ import type {
   StreakEffect,
   StreakView,
   TodayView,
+  TrackerCell,
+  TrackerChapter,
+  TrackerRow,
+  TrackerView,
 } from "./types";
 
 const STATUS_LABEL: Record<ResolvedEntry["status"], string> = {
@@ -337,4 +346,131 @@ function streakEffect(day: EvaluatedDay, before: StreakView, after: StreakView):
   if (after.state === "shielded") return "shielded";
   if (after.state === "at_risk") return "at_risk";
   return "holds";
+}
+
+/** Current habits (latest version each), in display order. */
+export function currentHabits(data: ArcData): Habit[] {
+  const byHabit = new Map<string, HabitVersion[]>();
+  for (const v of data.habitVersions)
+    byHabit.set(v.habitId, [...(byHabit.get(v.habitId) ?? []), v]);
+  return [...byHabit.values()]
+    .map((versions) => versions.reduce((a, b) => (b.validFrom >= a.validFrom ? b : a)).habit)
+    .sort((a, b) => a.order - b.order);
+}
+
+const WEEKDAY_SHORT = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"] as const;
+const monthLong = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" });
+
+/**
+ * Month tracker for one chapter (MASTER_DOC §13 #12): a row per day, a cell per habit,
+ * and chapter totals. Every number comes from the engine (evaluateArc, chapterTotals).
+ */
+export function buildTrackerView(
+  data: ArcData | null,
+  now: Date,
+  chapterIndex?: number,
+): TrackerView {
+  if (!data) return { kind: "no_arc" };
+  const { arc } = data;
+  const today = localDate(now, arc.timeZone);
+  const evaluated = evaluateArc({ ...data, now });
+  const byDate = new Map(evaluated.map((d) => [d.date, d]));
+  const all = generateChapters(arc.startDate, arc.durationDays);
+  const fallback = today < arc.startDate ? all[0] : all.at(-1);
+  const selected = all.find((c) => c.index === chapterIndex) ?? chapterFor(all, today) ?? fallback;
+  // generateChapters always returns at least one chapter for a valid arc.
+  if (!selected) return { kind: "no_arc" };
+
+  const chapters: TrackerChapter[] = all.map((c) => ({
+    index: c.index,
+    label: monthLong.format(new Date(`${c.startDate}T00:00:00Z`)),
+    startDate: c.startDate,
+    endDate: c.endDate,
+    days: c.days,
+    started: today >= c.startDate,
+  }));
+  const habits = currentHabits(data);
+  const versions = new Map<string, HabitVersion[]>();
+  for (const v of data.habitVersions)
+    versions.set(v.habitId, [...(versions.get(v.habitId) ?? []), v]);
+
+  const rows: TrackerRow[] = eachDay(selected.startDate, selected.endDate).map((date) => {
+    const ev = byDate.get(date);
+    const cells: TrackerCell[] = habits.map((col) => {
+      const habit = habitOn(versions.get(col.id) ?? [], date);
+      const none: TrackerCell = {
+        habitId: col.id,
+        state: "none",
+        points: null,
+        provisional: false,
+      };
+      if (!habit) return none;
+      if (ev) {
+        const r = ev.entries.find((e) => e.habitId === col.id);
+        return r
+          ? { habitId: col.id, state: r.status, points: r.points, provisional: r.provisional }
+          : none;
+      }
+      const rests = !isScheduled(habit, date) || habit.status === "paused";
+      return { habitId: col.id, state: rests ? "rest" : "future", points: null, provisional: true };
+    });
+    const log = data.dayLogs.find((l) => l.date === date);
+    return {
+      date,
+      dayNumber: dayNumber(arc.startDate, date),
+      weekday: WEEKDAY_SHORT[weekday(date)],
+      dayOfMonth: Number(date.slice(8)),
+      isToday: date === today,
+      future: date > today,
+      final: ev?.final ?? false,
+      editable: editWindow(date, now, arc).editable,
+      score: ev?.score ?? null,
+      isSick: ev?.isSick ?? false,
+      isStrong: ev?.isStrong ?? false,
+      recoveryDay: ev?.recoveryDay ?? false,
+      cells,
+      journal: log?.journal ?? null,
+      mood: log?.mood ?? null,
+    };
+  });
+
+  const [t] = chapterTotals(evaluated, [selected]);
+  const reached = rows.filter((r) => !r.future && r.date >= arc.startDate).length;
+  return {
+    kind: "tracker",
+    arc: arcSummary(data),
+    chapters,
+    chapter: chapters.find((c) => c.index === selected.index) ?? (chapters[0] as TrackerChapter),
+    columns: habits.map((h) => ({
+      habitId: h.id,
+      number: String(h.order).padStart(2, "0"),
+      name: h.name,
+      category: h.category,
+    })),
+    rows,
+    totals: {
+      total: t?.total ?? 0,
+      maxSoFar: reached * 100,
+      max: t?.max ?? selected.days * 100,
+      countedDays: t?.countedDays ?? 0,
+      strongDays: t?.strongDays ?? 0,
+      average: t?.average ?? null,
+    },
+  };
+}
+
+/** Day Detail: the day, what it did to the streak, and the streak after it (MASTER_DOC §10). */
+export function buildDayDetail(data: ArcData, date: ISODate, now: Date): DayDetailView | null {
+  const days = evaluateArc({ ...data, now }).filter((d) => d.date <= date);
+  const evaluated = days.at(-1);
+  if (!evaluated || evaluated.date !== date) return null;
+  const before = streakView(days.slice(0, -1));
+  const after = streakView(days);
+  return {
+    day: dayView(data, evaluated, now),
+    chapterIndex:
+      chapterFor(generateChapters(data.arc.startDate, data.arc.durationDays), date)?.index ?? 1,
+    streakEffect: streakEffect(evaluated, before, after),
+    streakAfter: after,
+  };
 }

@@ -240,6 +240,77 @@ export type TodayView =
       banners: Banner[];
     };
 
+/** One tracker cell: a habit on a day. "future" = not reached yet; "none" = habit not in the arc that day. */
+export type TrackerCellState = EntryStatus | "future" | "none";
+
+export type TrackerCell = {
+  habitId: string;
+  state: TrackerCellState;
+  points: number | null;
+  provisional: boolean;
+};
+
+export type TrackerRow = {
+  date: ISODate;
+  dayNumber: number;
+  /** "Mo", "Tu" … */
+  weekday: string;
+  dayOfMonth: number;
+  isToday: boolean;
+  /** After today (arc timezone). */
+  future: boolean;
+  /** Past cutoff: the snapshot is final. */
+  final: boolean;
+  editable: boolean;
+  score: number | null;
+  isSick: boolean;
+  isStrong: boolean;
+  recoveryDay: boolean;
+  cells: TrackerCell[];
+  journal: string | null;
+  mood: number | null;
+};
+
+export type TrackerColumn = {
+  habitId: string;
+  number: string;
+  name: string;
+  category: Habit["category"];
+};
+
+export type TrackerChapter = {
+  index: number;
+  /** "October". */
+  label: string;
+  startDate: ISODate;
+  endDate: ISODate;
+  days: number;
+  /** At least one day of this chapter has been reached. */
+  started: boolean;
+};
+
+export type TrackerView =
+  | { kind: "no_arc" }
+  | {
+      kind: "tracker";
+      arc: ArcSummary;
+      chapters: TrackerChapter[];
+      chapter: TrackerChapter;
+      columns: TrackerColumn[];
+      rows: TrackerRow[];
+      totals: {
+        /** Sum of daily scores so far (sick days add nothing). */
+        total: number;
+        /** 100 × chapter days reached so far. */
+        maxSoFar: number;
+        /** 100 × chapter days. */
+        max: number;
+        countedDays: number;
+        strongDays: number;
+        average: number | null;
+      };
+    };
+
 export type StreakEffect = "grows" | "holds" | "at_risk" | "shielded" | "broken" | "frozen";
 
 export type CloseDaySummary = {
@@ -251,6 +322,15 @@ export type CloseDaySummary = {
   /** Streak if the day stays as it is now. */
   streak: StreakView;
   effect: StreakEffect;
+};
+
+/** Day Detail (MASTER_DOC §10): the day, its streak effect and the streak after it. */
+export type DayDetailView = {
+  day: DayView;
+  chapterIndex: number;
+  /** What this day did to the arc streak (for today: if it stays as it is). */
+  streakEffect: StreakEffect;
+  streakAfter: StreakView;
 };
 
 export type CloseDayInput = { journal: string | null; mood: number | null };
