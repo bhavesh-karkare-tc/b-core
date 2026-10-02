@@ -8,7 +8,7 @@ import { browserStore } from "./mock/store";
 export type * from "./types";
 export { DataError } from "./types";
 export { formatClock } from "./view-models";
-export { closeDayInputSchema } from "./schemas";
+export { bodyCheckInputSchema, closeDayInputSchema, commitNameSchema } from "./schemas";
 export type { DemoState } from "./mock/api";
 export type { ScenarioId } from "./mock/scenarios";
 
@@ -27,6 +27,19 @@ export const logTimeNow = api.logTimeNow;
 export const setChecklistItem = api.setChecklistItem;
 export const closeDay = api.closeDay;
 export const markSickDay = api.markSickDay;
+
+export const getSetupContext = api.getSetupContext;
+export const saveSetupDraft = api.saveSetupDraft;
+export const clearSetupDraft = api.clearSetupDraft;
+export const createArc = api.createArc;
+export const abandonArc = api.abandonArc;
+export const saveBodyCheck = api.saveBodyCheck;
+
+export const getHabitSettings = api.getHabitSettings;
+export const updateHabit = api.updateHabit;
+export const addHabit = api.addHabit;
+export const removeHabit = api.removeHabit;
+export const reorderHabits = api.reorderHabits;
 
 /** Demo controls — mock implementation only. */
 export const demo = {

@@ -9,15 +9,19 @@ import {
   type Arc,
   type Habit,
 } from "@b-core/arc-engine";
-import type { ArcData, StoredDayLog, StoredEntry } from "../types";
+import type { SetupDraft, StoredArc, StoredDayLog, StoredEntry } from "../types";
 import { scenario, type ScenarioId, type TodayPreset } from "./scenarios";
 
 export type MockState = {
-  version: 1;
+  version: 2;
   scenario: ScenarioId;
   /** Pinned demo clock, ISO instant. */
   now: string;
-  data: ArcData | null;
+  /** The one active (or upcoming) arc; null when none. */
+  activeArcId: string | null;
+  /** Active arc plus past (completed / abandoned) arcs. */
+  arcs: StoredArc[];
+  setupDraft: SetupDraft | null;
 };
 
 const ARC_ID = "arc-winter-2026";
@@ -71,11 +75,11 @@ function missedIndices(code: string, dayIndex: number): number[] {
   return [];
 }
 
-function historyDay(habits: Habit[], date: string, code: string, dayIndex: number) {
+function historyDay(habits: Habit[], date: string, code: string, dayIndex: number, arcId: string) {
   const entries: StoredEntry[] = [];
   const logs: StoredDayLog[] = [];
   if (code === "K") {
-    logs.push({ arcId: ARC_ID, date, isSick: true, journal: null, mood: null, closedAt: null });
+    logs.push({ arcId, date, isSick: true, journal: null, mood: null, closedAt: null });
     return { entries, logs };
   }
   if (code === "E") return { entries, logs };
@@ -88,7 +92,7 @@ function historyDay(habits: Habit[], date: string, code: string, dayIndex: numbe
   });
   if (code !== "Y") {
     logs.push({
-      arcId: ARC_ID,
+      arcId,
       date,
       isSick: false,
       journal: JOURNAL[dayIndex % JOURNAL.length] ?? null,
@@ -151,28 +155,28 @@ function todayEntries(
   return rows;
 }
 
-/** Build a scenario's arc data and pinned clock in the given timezone. */
-export function seedScenario(id: ScenarioId, timeZone: string): MockState {
-  const s = scenario(id);
-  const now = instantAt(s.nowDate, s.nowTime, timeZone).toISOString();
-
-  const habits = habitsFromTemplate(ARC_ID, WINTER_ARC_TEMPLATE, (_, i) => `habit-${i + 1}`);
+function storedArc(
+  id: string,
+  startDate: string,
+  history: string,
+  timeZone: string,
+  status: Arc["status"],
+  habits: Habit[],
+  today?: { date: string; preset: TodayPreset; sick?: boolean },
+): StoredArc {
   const entries: StoredEntry[] = [];
   const dayLogs: StoredDayLog[] = [];
-
-  [...s.history].forEach((code, i) => {
-    const day = historyDay(habits, addDays(s.startDate, i), code, i);
+  [...history].forEach((code, i) => {
+    const day = historyDay(habits, addDays(startDate, i), code, i, id);
     entries.push(...day.entries);
     dayLogs.push(...day.logs);
   });
-
-  const todayIndex = s.history.length;
-  if (s.nowDate >= s.startDate) {
-    entries.push(...todayEntries(habits, s.nowDate, s.today, todayIndex));
-    if (s.todaySick) {
+  if (today && today.date >= startDate) {
+    entries.push(...todayEntries(habits, today.date, today.preset, history.length));
+    if (today.sick) {
       dayLogs.push({
-        arcId: ARC_ID,
-        date: s.nowDate,
+        arcId: id,
+        date: today.date,
         isSick: true,
         journal: null,
         mood: null,
@@ -180,27 +184,74 @@ export function seedScenario(id: ScenarioId, timeZone: string): MockState {
       });
     }
   }
-
-  const arc: Arc = {
-    id: ARC_ID,
-    startDate: s.startDate,
-    durationDays: ARC_DEFAULT_DAYS,
-    timeZone,
-    strongThreshold: DEFAULT_THRESHOLD,
-    myWhy: "Finish the year stronger than I started it. Never miss two.",
-    status: s.nowDate < s.startDate ? "upcoming" : "active",
-    sickDaysUsed: dayLogs.filter((l) => l.isSick).length,
-  };
-
   return {
-    version: 1,
-    scenario: id,
-    now,
-    data: {
-      arc,
-      habitVersions: habits.map((h) => ({ habitId: h.id, validFrom: arc.startDate, habit: h })),
-      entries,
-      dayLogs,
+    arc: {
+      id,
+      startDate,
+      durationDays: ARC_DEFAULT_DAYS,
+      timeZone,
+      strongThreshold: DEFAULT_THRESHOLD,
+      myWhy: "Finish the year stronger than I started it. Never miss two.",
+      status,
+      sickDaysUsed: dayLogs.filter((l) => l.isSick).length,
     },
+    habitVersions: habits.map((h) => ({ habitId: h.id, validFrom: startDate, habit: h })),
+    entries,
+    dayLogs,
+    bodyChecks: [],
+    chapterTargets: {},
+    commitment: { name: "Demo user", committedAt: `${startDate}T03:00:00.000Z` },
   };
+}
+
+/** Last winter's arc for the returning-user scenario: 8 habits, one swapped in. */
+function pastArc(timeZone: string): StoredArc {
+  const id = "arc-winter-2025";
+  const drafts = WINTER_ARC_TEMPLATE.filter((h) => h.name !== "Skin Care" && h.name !== "No P");
+  const habits = habitsFromTemplate(id, drafts, (_, i) => `past-habit-${i + 1}`);
+  habits.push({
+    id: "past-habit-cold",
+    arcId: id,
+    order: habits.length + 1,
+    name: "Cold Shower",
+    type: "yesno",
+    category: "discipline",
+    hasMinimum: true,
+    minimumText: "30 seconds cold at the end",
+    schedule: { kind: "daily" },
+    reminderTime: null,
+    status: "active",
+  });
+  const codes =
+    "SSSSSSWSSSSSSSSWWSSSSSSSSSSSSKSSSSSSSWSSSSSSSSSSSSSSSWWSSSSSSSSSSSSSSSSSSSSSSKSSSSSSSSSSSSSS";
+  return storedArc(
+    id,
+    "2025-10-01",
+    codes.slice(0, ARC_DEFAULT_DAYS),
+    timeZone,
+    "completed",
+    habits,
+  );
+}
+
+/** Build a scenario's arcs and pinned clock in the given timezone. */
+export function seedScenario(id: ScenarioId, timeZone: string): MockState {
+  const s = scenario(id);
+  const now = instantAt(s.nowDate, s.nowTime, timeZone).toISOString();
+  const base = { version: 2 as const, scenario: id, now, setupDraft: null };
+
+  if (s.arc === "none") return { ...base, activeArcId: null, arcs: [] };
+  if (s.arc === "returning") return { ...base, activeArcId: null, arcs: [pastArc(timeZone)] };
+
+  const habits = habitsFromTemplate(ARC_ID, WINTER_ARC_TEMPLATE, (_, i) => `habit-${i + 1}`);
+  const arc = storedArc(
+    ARC_ID,
+    s.startDate,
+    s.history,
+    timeZone,
+    s.nowDate < s.startDate ? "upcoming" : "active",
+    habits,
+    { date: s.nowDate, preset: s.today, sick: s.todaySick },
+  );
+  return { ...base, activeArcId: ARC_ID, arcs: [arc] };
 }

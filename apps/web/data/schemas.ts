@@ -27,3 +27,17 @@ export const checklistItemPatchSchema = z.object({
   text: z.string().trim().max(60).optional(),
   done: z.boolean().optional(),
 });
+
+const optionalNumber = (min: number, max: number, int = false) =>
+  (int ? z.number().int() : z.number()).min(min).max(max).nullable();
+
+/** Body check (MASTER_DOC §6 step 7): all optional. */
+export const bodyCheckInputSchema = z.object({
+  weightKg: optionalNumber(20, 400),
+  waistCm: optionalNumber(30, 250),
+  pushupsMax: optionalNumber(0, 500, true),
+  energy: optionalNumber(1, 10, true),
+});
+
+/** Commitment signature: the typed name (or "I commit" when held). */
+export const commitNameSchema = z.string().trim().min(1, "Type your name to commit").max(60);

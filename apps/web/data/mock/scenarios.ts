@@ -15,12 +15,16 @@ export type ScenarioId =
   | "sunday"
   | "all-done"
   | "countdown"
-  | "day-1";
+  | "day-1"
+  | "no-arc"
+  | "returning";
 
 export type TodayPreset = "mockup" | "all-done" | "sunday" | "empty";
 
 export type Scenario = {
   id: ScenarioId;
+  /** "active" seeds the arc below; "none" seeds nothing; "returning" seeds only a completed past arc. */
+  arc?: "active" | "none" | "returning";
   label: string;
   description: string;
   startDate: string;
@@ -137,6 +141,28 @@ export const SCENARIOS: readonly Scenario[] = [
     today: "empty",
     nowDate: "2026-10-23",
     nowTime: "08:00",
+  },
+  {
+    id: "no-arc",
+    arc: "none",
+    label: "New user",
+    description: "No arc yet: Home and Today offer setup.",
+    startDate: "2026-10-23",
+    history: "",
+    today: "empty",
+    nowDate: "2026-10-23",
+    nowTime: "10:00",
+  },
+  {
+    id: "returning",
+    arc: "returning",
+    label: "Returning user",
+    description: "Last winter's arc is complete; setup can copy its habits.",
+    startDate: "2025-10-01",
+    history: "",
+    today: "empty",
+    nowDate: "2026-10-23",
+    nowTime: "10:00",
   },
 ];
 

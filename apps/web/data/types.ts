@@ -4,12 +4,15 @@
  */
 import type {
   Arc,
+  BodyCheck,
   ClockTime,
   DayLog,
   EditWindow,
   EntryStatus,
   Habit,
+  HabitDraft,
   HabitEntry,
+  HabitField,
   HabitVersion,
   ISODate,
   RankName,
@@ -19,9 +22,12 @@ import type {
 
 export type {
   Arc,
+  BodyCheck,
   ClockTime,
   EntryStatus,
   Habit,
+  HabitDraft,
+  HabitField,
   ISODate,
   ManualStatus,
   RankName,
@@ -45,6 +51,81 @@ export type ArcData = {
   habitVersions: HabitVersion[];
   entries: StoredEntry[];
   dayLogs: StoredDayLog[];
+};
+
+/** One arc as stored: scoring data plus setup extras. */
+export type StoredArc = ArcData & {
+  bodyChecks: BodyCheck[];
+  /** Optional free-text target per chapter index. */
+  chapterTargets: Record<number, string>;
+  commitment: { name: string; committedAt: string } | null;
+};
+
+export type BodyCheckInput = {
+  weightKg: number | null;
+  waistCm: number | null;
+  pushupsMax: number | null;
+  /** 1–10. */
+  energy: number | null;
+};
+
+export type TemplateId = "default" | "blank" | "previous";
+
+/** Setup flow in progress, saved on every step so nothing is lost (MASTER_DOC §6). */
+export type SetupDraft = {
+  step: number;
+  template: TemplateId | null;
+  habits: HabitDraft[];
+  startDate: ISODate | null;
+  durationDays: number;
+  strongThreshold: number;
+  myWhy: string;
+  chapterTarget: string;
+  bodyCheck: BodyCheckInput | null;
+  bodyCheckSkipped: boolean;
+  commitName: string;
+};
+
+export type CreateArcInput = {
+  habits: HabitDraft[];
+  startDate: ISODate;
+  durationDays: number;
+  strongThreshold: number;
+  myWhy: string;
+  chapterTarget: string | null;
+  bodyCheck: BodyCheckInput | null;
+  commitName: string;
+};
+
+export type PastArcView = {
+  id: string;
+  startDate: ISODate;
+  endDate: ISODate;
+  status: Arc["status"];
+  habitCount: number;
+};
+
+export type SetupContext = {
+  /** Server (demo) time, ISO. */
+  now: string;
+  timeZone: string;
+  activeArc: ArcSummary | null;
+  pastArcs: PastArcView[];
+  templates: { default: HabitDraft[]; previous: HabitDraft[] | null };
+  startOptions: { today: ISODate; nextMonthStart: ISODate };
+  draft: SetupDraft | null;
+};
+
+export type HabitSettingsView = {
+  arc: ArcSummary;
+  habits: Habit[];
+  /** True after the end of Day 3: type, target and schedule are locked (TC08). */
+  locked: boolean;
+  /** Last day habits can be changed freely. */
+  lockDate: ISODate;
+  /** Fields still editable now. */
+  editableFields: HabitField[];
+  canChangeList: boolean;
 };
 
 export type QuickAction = "toggle" | "increment" | "log-time" | "session-done" | "open-checklist";
@@ -184,7 +265,9 @@ export type DataErrorCode =
   | "rest_day"
   | "sick_day"
   | "invalid_input"
-  | "sick_not_allowed";
+  | "sick_not_allowed"
+  | "arc_active"
+  | "locked";
 
 export class DataError extends Error {
   readonly code: DataErrorCode;
