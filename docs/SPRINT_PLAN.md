@@ -28,7 +28,7 @@ Current sprint: **Sprint 2**
 ### Sprint 2 · Mock data layer + Today
 - [x] `data/types.ts`, `data/index.ts` with async functions (getActiveArc, getToday, logHabit, setHabitValue, closeDay, markSickDay…)
 - [x] Mock implementation with seeded October data (Day 23 scenario) persisted to localStorage
-- [ ] Today screen: header, chapter progress, score ring, streak pill, habit rows for all 5 types
+- [x] Today screen: header, chapter progress, score ring, streak pill, habit rows for all 5 types
 - [ ] Status sheet / count keypad / time entry / checklist interactions
 - [ ] Close the day sheet; banners: at risk, shielded, yesterday unlogged, sick day, broken
 - **Done when:** a full day can be logged on mock data and score/streak update live
