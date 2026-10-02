@@ -44,8 +44,8 @@ Current sprint: **Sprint 5**
 - **Done when:** tracker numbers match engine output for every seeded day
 
 ### Sprint 5 · Dashboard
-- [ ] Tiles, streak card, rank card, arc heatmap, score trend, habit completion, category balance, body metrics
-- [ ] Insights (weakest habit, day-of-week pattern, minimum overuse); "unlock after 7 days" state
+- [x] Tiles, streak card, rank card, arc heatmap, score trend, habit completion, category balance, body metrics
+- [x] Insights (weakest habit, day-of-week pattern, minimum overuse); "unlock after 7 days" state
 - **Done when:** dashboard matches mockup and all figures reconcile with tracker
 
 ### Sprint 6 · Reports + Settings
