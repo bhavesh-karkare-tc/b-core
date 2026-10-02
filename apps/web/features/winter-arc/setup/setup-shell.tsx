@@ -10,7 +10,8 @@ import { STEP_COUNT, STEPS } from "./setup-draft";
 type SetupShellProps = {
   step: number;
   onBack?: () => void;
-  primary: { label: string; onClick: () => void; disabled?: boolean };
+  /** Sticky primary action; omit when the step has its own (commitment). */
+  primary?: { label: string; onClick: () => void; disabled?: boolean };
   /** Shown above the primary button when the step can't continue. */
   issue?: string | null;
   children: ReactNode;
@@ -57,16 +58,18 @@ export function SetupShell({ step, onBack, primary, issue, children }: SetupShel
         </Button>
       </header>
       <div className="flex flex-1 flex-col gap-5 pb-6">{children}</div>
-      <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t border-line bg-bg/95 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-6 sm:px-6">
-        {issue ? (
-          <p role="alert" className="text-center text-sm text-ember">
-            {issue}
-          </p>
-        ) : null}
-        <Button size="lg" block onClick={primary.onClick} disabled={primary.disabled}>
-          {primary.label}
-        </Button>
-      </div>
+      {primary ? (
+        <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t border-line bg-bg/95 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-6 sm:px-6">
+          {issue ? (
+            <p role="alert" className="text-center text-sm text-ember">
+              {issue}
+            </p>
+          ) : null}
+          <Button size="lg" block onClick={primary.onClick} disabled={primary.disabled}>
+            {primary.label}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
