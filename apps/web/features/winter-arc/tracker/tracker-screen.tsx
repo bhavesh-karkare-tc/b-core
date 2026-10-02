@@ -3,8 +3,10 @@
 import { Button } from "@b-core/ui/components/button";
 import { Flag, TriangleAlert } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { EmptyPage } from "@/components/shell/empty-page";
+import { DayDetailSheet } from "../day-detail/day-detail-sheet";
 import { Segmented } from "../habits/segmented";
 import { shortDate } from "../lib/format";
 import { useMediaQuery } from "../lib/use-media-query";
@@ -29,6 +31,19 @@ export function TrackerScreen() {
   const [mode, setMode] = useState<Mode>("month");
   const [week, setWeek] = useState<{ chapter: number; index: number } | null>(null);
   const wide = useMediaQuery("(min-width: 64rem)");
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const openDay = params.get("day");
+  /** Day Detail is linkable: ?day=YYYY-MM-DD. */
+  const setOpenDay = (date: string | null) => {
+    const next = new URLSearchParams(params);
+    if (date) next.set("day", date);
+    else next.delete("day");
+    next.delete("demo");
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
 
   if (state.status === "loading") return <TrackerSkeleton />;
   if (state.status === "error") {
@@ -90,6 +105,7 @@ export function TrackerScreen() {
           rows={view.rows}
           threshold={view.arc.strongThreshold}
           wide={wide}
+          onOpenDay={setOpenDay}
         />
       ) : currentWeek ? (
         <WeekGrid
@@ -99,8 +115,14 @@ export function TrackerScreen() {
           count={weeks.length}
           threshold={view.arc.strongThreshold}
           onWeek={(i) => setWeek({ chapter: view.chapter.index, index: i })}
+          onOpenDay={setOpenDay}
         />
       ) : null}
+      <DayDetailSheet
+        date={openDay && /^\d{4}-\d{2}-\d{2}$/.test(openDay) ? openDay : null}
+        threshold={view.arc.strongThreshold}
+        onClose={() => setOpenDay(null)}
+      />
     </div>
   );
 }

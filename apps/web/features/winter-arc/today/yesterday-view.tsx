@@ -49,6 +49,7 @@ export function YesterdayView({ day, run, onBack }: YesterdayViewProps) {
       </p>
       <HabitList
         title="Yesterday's habits"
+        showEdit={false}
         rows={day.habits}
         onOpen={(row: HabitRowView) => setOpenId(row.habit.id)}
         onQuickAction={(row) => quickAction(row, day.date)}

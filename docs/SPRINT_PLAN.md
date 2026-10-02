@@ -39,8 +39,8 @@ Current sprint: **Sprint 4**
 - **Done when:** a new arc can be created in under 3 minutes and lands on Today
 
 ### Sprint 4 · Tracker + Day Detail
-- [ ] Month grid (10 habits × days, points, journal), chapter switch, week view on small screens
-- [ ] Day Detail drawer/page: editable within window, locked after, sick day view
+- [x] Month grid (10 habits × days, points, journal), chapter switch, week view on small screens
+- [x] Day Detail drawer/page: editable within window, locked after, sick day view
 - **Done when:** tracker numbers match engine output for every seeded day
 
 ### Sprint 5 · Dashboard
