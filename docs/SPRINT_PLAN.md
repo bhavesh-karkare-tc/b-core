@@ -22,7 +22,7 @@ Current sprint: **Sprint 1**
 - [x] Arc streak state machine (safe, at_risk, shielded, broken), shields, sick days
 - [x] Habit streaks; rank from arc points; chapter generation (incl. mid-month start)
 - [x] Edit window / cutoff helpers (timezone-aware, `now` injected)
-- [ ] Tests for all engine-related Master Doc cases (TC07, TC12–TC17, TC22, TC23, TC28–TC37, TC44)
+- [x] Tests for all engine-related Master Doc cases (TC07, TC12–TC17, TC22, TC23, TC28–TC37, TC44)
 - **Done when:** all engine tests pass, 100% of engine exports covered by tests
 
 ### Sprint 2 · Mock data layer + Today

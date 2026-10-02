@@ -52,6 +52,11 @@ describe("count habits", () => {
     });
   });
 
+  it("a count entry with no value yet is pending, then Missed", () => {
+    expect(resolve(water, { value: null }).status).toBe("unlogged");
+    expect(resolve(water, { value: null }, { final: true }).status).toBe("missed");
+  });
+
   it("below minimum before cutoff stays pending", () => {
     expect(resolve(water, { value: 1500 })).toMatchObject({
       status: "unlogged",

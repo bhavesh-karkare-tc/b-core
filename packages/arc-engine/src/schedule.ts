@@ -1,4 +1,4 @@
-import { addDays, diffDays, eachDay, maxDate, minDate, weekStart, weekday } from "./dates";
+import { addDays, diffDays, maxDate, minDate, weekStart, weekday } from "./dates";
 import type { Habit, HabitVersion, ISODate } from "./types";
 
 type ArcSpan = { startDate: ISODate; durationDays: number };
@@ -28,11 +28,11 @@ export function isScheduled(habit: Habit, date: ISODate): boolean {
   }
 }
 
-/** Arc days in the Monday–Sunday week containing `date`. */
-function arcDaysInWeek(date: ISODate, arc: ArcSpan): ISODate[] {
+/** First and last arc day of the Monday–Sunday week containing `date`. */
+function arcWeekBounds(date: ISODate, arc: ArcSpan): { first: ISODate; last: ISODate } {
   const arcEnd = addDays(arc.startDate, arc.durationDays - 1);
   const monday = weekStart(date);
-  return eachDay(maxDate(monday, arc.startDate), minDate(addDays(monday, 6), arcEnd));
+  return { first: maxDate(monday, arc.startDate), last: minDate(addDays(monday, 6), arcEnd) };
 }
 
 /**
@@ -49,9 +49,8 @@ export function perWeekRestEligible(
   achievedBefore: number,
   arc: ArcSpan,
 ): boolean {
-  const week = arcDaysInWeek(date, arc);
-  const quota = Math.min(times, week.length);
-  const lastDay = week[week.length - 1] ?? date;
-  const daysLeftAfter = Math.max(0, diffDays(lastDay, date));
+  const { first, last } = arcWeekBounds(date, arc);
+  const quota = Math.min(times, diffDays(last, first) + 1);
+  const daysLeftAfter = diffDays(last, date);
   return achievedBefore + daysLeftAfter >= quota;
 }

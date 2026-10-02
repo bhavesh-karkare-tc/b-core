@@ -106,17 +106,18 @@ export function computeArcStreak(
 ): ArcStreakResult {
   let state = INITIAL_ARC_STREAK;
   const history: StreakDay[] = [];
-  const bestByChapter: Record<number, number> = {};
-  for (const c of chapters) bestByChapter[c.index] = 0;
 
   const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
   for (const day of sorted) {
     const { next, log } = stepArcStreak(state, day);
     state = next;
     history.push(log);
-    const chapter = chapters.find((c) => day.date >= c.startDate && day.date <= c.endDate);
-    if (chapter)
-      bestByChapter[chapter.index] = Math.max(bestByChapter[chapter.index] ?? 0, next.current);
+  }
+
+  const bestByChapter: Record<number, number> = {};
+  for (const c of chapters) {
+    const inChapter = history.filter((h) => h.date >= c.startDate && h.date <= c.endDate);
+    bestByChapter[c.index] = Math.max(0, ...inChapter.map((h) => h.current));
   }
 
   return { state, history, bestByChapter };
