@@ -4,9 +4,12 @@
  */
 
 export * from "./arc-streak";
+export * from "./chapters";
 export * from "./completion";
 export * from "./constants";
 export * from "./dates";
+export * from "./habit-streak";
+export * from "./rank";
 export * from "./schedule";
 export * from "./scoring";
 export * from "./sick";

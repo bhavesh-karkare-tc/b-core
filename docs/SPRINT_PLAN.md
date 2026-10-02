@@ -20,7 +20,7 @@ Current sprint: **Sprint 1**
 - [x] Status resolution per habit type incl. cutoff rules (count/time/checklist min vs target)
 - [x] Daily score, strong day, weekly/chapter/arc totals, completion %
 - [x] Arc streak state machine (safe, at_risk, shielded, broken), shields, sick days
-- [ ] Habit streaks; rank from arc points; chapter generation (incl. mid-month start)
+- [x] Habit streaks; rank from arc points; chapter generation (incl. mid-month start)
 - [ ] Edit window / cutoff helpers (timezone-aware, `now` injected)
 - [ ] Tests for all engine-related Master Doc cases (TC07, TC12–TC17, TC22, TC23, TC28–TC37, TC44)
 - **Done when:** all engine tests pass, 100% of engine exports covered by tests
