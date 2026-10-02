@@ -46,6 +46,7 @@ import {
   type DashboardView,
   type DayDetailView,
   type DayView,
+  type HabitDetailView,
   type HabitSettingsView,
   type HabitValuePatch,
   type SetupContext,
@@ -66,6 +67,7 @@ import {
   currentHabits,
 } from "../view-models";
 import { buildDashboardView } from "../dashboard";
+import { buildHabitDetail } from "../habit-detail";
 import { DEFAULT_SCENARIO, SCENARIOS, type Scenario, type ScenarioId } from "./scenarios";
 import { seedScenario, type MockState } from "./seed";
 import type { KeyValueStore } from "./store";
@@ -223,6 +225,12 @@ export function createMockApi({ store, timeZone, makeId = defaultMakeId }: Optio
     async getDashboard(filter: DashboardFilter = { kind: "arc" }): Promise<DashboardView> {
       const state = load();
       return buildDashboardView(activeArc(state), new Date(state.now), filter);
+    },
+
+    /** Habit Detail for one habit, calendar for a chapter (defaults to the current one). */
+    async getHabitDetail(habitId: string, chapterIndex?: number): Promise<HabitDetailView | null> {
+      const { data, now } = current();
+      return buildHabitDetail(data, habitId, now, chapterIndex);
     },
 
     async getDayDetail(date: ISODate): Promise<DayDetailView | null> {

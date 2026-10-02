@@ -9,6 +9,7 @@ import { useState } from "react";
 import { EmptyPage } from "@/components/shell/empty-page";
 import type { DashboardFilter } from "@/data";
 import { DayDetailSheet } from "../day-detail/day-detail-sheet";
+import { HabitDetailSheet } from "../habit-detail/habit-detail-sheet";
 import { useMediaQuery } from "../lib/use-media-query";
 import { FilterRow } from "./filter-row";
 import { HabitBars } from "./habit-bars";
@@ -48,6 +49,7 @@ export function DashboardScreen() {
     router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
   };
   const openDay = params.get("day");
+  const openHabit = params.get("habit");
 
   if (state.status === "loading") {
     return (
@@ -122,7 +124,11 @@ export function DashboardScreen() {
   );
   const habits = (
     <Panel title="Habit completion · weakest first">
-      <HabitBars habits={view.habits} limit={wide || showAllHabits ? null : 4} />
+      <HabitBars
+        habits={view.habits}
+        limit={wide || showAllHabits ? null : 4}
+        onOpenHabit={(id) => setParam("habit", id)}
+      />
       {!wide && view.habits.length > 4 ? (
         <Button variant="ghost" block onClick={() => setShowAllHabits(!showAllHabits)}>
           {showAllHabits ? "Show fewer" : `Show all ${view.habits.length}`}
@@ -238,6 +244,7 @@ export function DashboardScreen() {
         threshold={threshold}
         onClose={() => setParam("day", null)}
       />
+      <HabitDetailSheet habitId={openHabit} onClose={() => setParam("habit", null)} />
     </div>
   );
 }

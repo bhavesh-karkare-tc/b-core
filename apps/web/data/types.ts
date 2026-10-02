@@ -397,6 +397,27 @@ export type DashboardView =
       insights: { unlocked: boolean; unlockDay: number; items: Insight[] };
     };
 
+/** Habit Detail (MASTER_DOC §10, screen #15). */
+export type HabitDetailView = {
+  habit: Habit;
+  chapters: TrackerChapter[];
+  chapter: TrackerChapter;
+  /** Completion over all finalised days so far, 0–1. */
+  completion: number | null;
+  currentStreak: number;
+  bestStreak: number;
+  /** Minimum days so far (finalised). */
+  minimumCount: number;
+  /** The selected chapter, one cell per day. */
+  calendar: { date: ISODate; state: TrackerCellState; isToday: boolean }[];
+  /** Completion per Monday–Sunday week (finalised days), arc start → today. */
+  weeks: { weekStart: ISODate; completion: number | null; counted: number }[];
+  /** Count habits: logged value per reached day in the chapter. */
+  values: { date: ISODate; value: number | null }[] | null;
+  /** Time habits: logged clock time per reached day in the chapter. */
+  times: { date: ISODate; loggedTime: string | null }[] | null;
+};
+
 /** Day Detail (MASTER_DOC §10): the day, its streak effect and the streak after it. */
 export type DayDetailView = {
   day: DayView;
