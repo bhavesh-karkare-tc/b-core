@@ -9,7 +9,7 @@
     "./styles/*": "./src/styles/*"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
