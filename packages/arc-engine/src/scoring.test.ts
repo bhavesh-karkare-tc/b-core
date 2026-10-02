@@ -6,6 +6,7 @@ import {
   chapterTotals,
   dailyScore,
   dayResult,
+  habitsNeededForStrong,
   heatLevel,
   isStrongScore,
   weeklyTotals,
@@ -171,5 +172,36 @@ describe("heatLevel", () => {
 
   it("level boundaries: 39/40, 59/60, 79/80, 99/100", () => {
     expect([39, 40, 59, 60, 79, 80, 99, 100].map(heatLevel)).toEqual([0, 1, 1, 2, 2, 3, 3, 4]);
+  });
+});
+
+describe("habitsNeededForStrong", () => {
+  it('Day 23 mockup: 5 done + 5 pending → "Five more ticks" needs 3 at 80', () => {
+    // 50 so far; each Done adds 10 → 80 after 3.
+    expect(
+      habitsNeededForStrong(resolved([...times(5, "done"), ...times(5, "unlogged")]), 80),
+    ).toBe(3);
+  });
+
+  it("is 0 when already strong", () => {
+    expect(habitsNeededForStrong(resolved(times(10, "done")), 80)).toBe(0);
+  });
+
+  it("uses Minimum upgrades after pending habits", () => {
+    // 7 done + 3 minimum = 85 → strong; at threshold 95 need 2 upgrades (+5 each → 95)
+    expect(habitsNeededForStrong(resolved([...times(7, "done"), ...times(3, "minimum")]), 95)).toBe(
+      2,
+    );
+  });
+
+  it("ignores entries that are not counted", () => {
+    expect(habitsNeededForStrong(resolved(["done", "sick", "unlogged"]), 80)).toBe(1);
+  });
+
+  it("is null when out of reach or nothing counted", () => {
+    expect(
+      habitsNeededForStrong(resolved([...times(5, "missed"), ...times(5, "done")]), 80),
+    ).toBeNull();
+    expect(habitsNeededForStrong(resolved(times(3, "sick")), 80)).toBeNull();
   });
 });

@@ -110,3 +110,31 @@ export function heatLevel(score: number | null): HeatLevel {
   if (score >= 40) return 1;
   return 0;
 }
+
+/**
+ * Fewest more habits to log to reach the threshold today ("Five more ticks to stay safe").
+ * Each pending habit logged Done adds 10; upgrading a Minimum to Done adds 5.
+ * Returns 0 when already strong, null when the threshold is out of reach (or nothing is counted).
+ */
+export function habitsNeededForStrong(
+  entries: readonly ResolvedEntry[],
+  threshold: number,
+): number | null {
+  const score = dailyScore(entries);
+  if (score === null) return null;
+  if (score >= threshold) return 0;
+
+  const counted = entries.flatMap((e) => (e.points === null ? [] : [{ ...e, points: e.points }]));
+  const gains = counted
+    .map((e) => (e.status === "unlogged" ? MAX_POINTS_PER_HABIT : e.status === "minimum" ? 5 : 0))
+    .filter((g) => g > 0)
+    .sort((a, b) => b - a);
+
+  let sum = counted.reduce((acc, e) => acc + e.points, 0);
+  for (const [i, gain] of gains.entries()) {
+    sum += gain;
+    if (Math.round((sum / (MAX_POINTS_PER_HABIT * counted.length)) * 100) >= threshold)
+      return i + 1;
+  }
+  return null;
+}
