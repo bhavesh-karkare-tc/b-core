@@ -6,7 +6,7 @@ Current sprint: **Sprint 0**
 ## Phase 1 — Web UI prototype with mock data
 
 ### Sprint 0 · Foundation
-- [ ] Turborepo + pnpm monorepo: `apps/web`, `packages/arc-engine`, `packages/ui`, `packages/config`
+- [x] Turborepo + pnpm monorepo: `apps/web`, `packages/arc-engine`, `packages/ui`, `packages/config`
 - [ ] Next.js (App Router, TypeScript strict), ESLint, Prettier, Vitest wired into Turborepo tasks
 - [ ] Tailwind preset in `packages/ui` with Night Ice tokens (see CLAUDE.md), fonts Archivo + JetBrains Mono via next/font
 - [ ] shadcn/ui init; base primitives: Button, Card, Chip, Input, Toggle, Progress, Sheet, Dialog

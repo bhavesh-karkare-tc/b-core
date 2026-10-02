@@ -1,0 +1,4 @@
+{
+  "extends": "@b-core/config/tsconfig/library.json",
+  "include": ["src"]
+}
