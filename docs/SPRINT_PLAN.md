@@ -12,7 +12,7 @@ Current sprint: **Sprint 0**
 - [x] shadcn/ui init; base primitives: Button, Card, Chip, Input, Toggle, Progress, Sheet, Dialog
 - [x] B-Core app shell: web sidebar (Home, Winter Arc: Today/Tracker/Dashboard/Reports, Settings), header, responsive mobile bottom tabs
 - [x] Routes stubbed: `/winter-arc/today|tracker|dashboard|reports|setup|settings`
-- [ ] GitHub Actions CI: lint, typecheck, test on push
+- [x] GitHub Actions CI: lint, typecheck, test on push
 - **Done when:** app runs locally, shell + empty pages render in Night Ice theme, CI green
 
 ### Sprint 1 · arc-engine (pure logic)
