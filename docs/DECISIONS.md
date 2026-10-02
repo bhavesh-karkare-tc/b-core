@@ -19,6 +19,9 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | R6 | Commitment screen | Both: typing your name enables "I commit" (the accessible path), and holding the button for 1.5 s also commits. | `features/winter-arc/setup` |
 | R7 | Editing a habit before the Day 3 lock | Retroactive: the habit simply changes and Days 1–3 re-score. After lock only rename and reminder change (TC08); target changes wait for a new chapter (E7). | `setup.ts` (`isHabitFieldEditable`), `data/mock/api.ts` |
 | R8 | Setup while an arc is active (TC09) | Setup opens with an abandon dialog. Abandoning keeps the old arc as a read-only past arc (E15). | `data/mock/api.ts` (`abandonArc`) |
+| R9 | Habit Detail (screen #15) | Built in Sprint 5 with the dashboard; habit bars open it. | `features/winter-arc/habit-detail` |
+| R10 | Day-of-week insight | Shown when the weakest weekday averages 10+ points below the other days, on finalised counted days, with at least 2 samples of that weekday. | `insights.ts` (`dayOfWeekPattern`) |
+| R11 | Minimum-overuse insight | Minimum on 50%+ of the habit's last 14 finalised scheduled days (needs ≥ 7). | `insights.ts` (`minimumOveruse`) |
 
 ## Engineering assumptions
 
@@ -36,6 +39,7 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | A10 | Today streak display | The streak pill and banners use days **before** today. Today joins the streak once it is final or when you close it ("Streak safe, 10 days" on the close-day summary), so a half-logged afternoon never shows "at risk". | `data/view-models.ts` |
 | A11 | "x of y done" on Today | x = habits logged Done; y = counted habits minus Rest, so a Sunday reads "x of 9". | `data/view-models.ts` |
 | A12 | Demo clock (Phase 1 only) | The mock layer pins "now" (default Fri 23 Oct 2026, 15:00, browser timezone). Demo controls and `?demo=<scenario>` switch scenario or move the clock. Time-habit "Log now" uses this clock, never the device clock (E3). | `data/mock/*` |
+| A13 | Insight unlock and data | Insights unlock on Day 7 (MASTER_DOC: Days 1–6 locked). They read finalised days only, except "today" and streak risk. The weakest-habit insight compares this week with last week by completion %. | `insights.ts` |
 
 ## Open questions
 

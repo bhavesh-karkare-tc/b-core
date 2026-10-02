@@ -11,6 +11,7 @@ export * from "./cutoff";
 export * from "./dates";
 export * from "./evaluate";
 export * from "./habit-streak";
+export * from "./insights";
 export * from "./rank";
 export * from "./schedule";
 export * from "./scoring";
