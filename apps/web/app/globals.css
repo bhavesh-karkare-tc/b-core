@@ -2,12 +2,17 @@
 @import "@b-core/ui/styles/night-ice.css";
 
 /*
- * Below lg the shell has a sticky top bar and fixed bottom tabs. Keep focused or
- * scrolled-to elements clear of both (WCAG 2.4.11 Focus Not Obscured).
+ * Keep focused or scrolled-to elements clear of fixed/sticky chrome (WCAG 2.4.11
+ * Focus Not Obscured): below lg the sticky top bar, the fixed bottom tabs and a
+ * page's sticky action bar (e.g. "Close the day"); on lg+ just the action bar.
  */
+html {
+  scroll-padding-bottom: 6rem;
+}
+
 @media (width < 64rem) {
   html {
     scroll-padding-top: 4rem;
-    scroll-padding-bottom: 6.5rem;
+    scroll-padding-bottom: 11rem;
   }
 }

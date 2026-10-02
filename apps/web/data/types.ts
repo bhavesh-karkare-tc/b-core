@@ -143,6 +143,8 @@ export type TodayView =
   | {
       kind: "active";
       arc: ArcSummary;
+      /** Server (demo) time the view was built at, ISO. The client shows this, not its own clock (E3). */
+      now: string;
       day: DayView;
       chapters: ChapterView[];
       currentChapter: number;

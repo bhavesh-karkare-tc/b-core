@@ -1,27 +1,42 @@
 "use client";
 
 import { Button } from "@b-core/ui/components/button";
-import { Flag, Trophy, TriangleAlert } from "lucide-react";
+import { CloudOff, Flag, Trophy, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import type { HabitRowView } from "@/data";
 import { EmptyPage } from "@/components/shell/empty-page";
+import type { HabitRowView } from "@/data";
+import { useOnline } from "../lib/use-online";
 import { ChapterProgress } from "./chapter-progress";
+import { CloseDaySheet } from "./close-day-sheet";
 import { Countdown } from "./countdown";
 import { HabitList } from "./habit-list";
 import { ScoreCard } from "./score-card";
+import { SickDayButton } from "./sick-day-button";
+import { HabitSheet } from "./sheets/habit-sheet";
+import { TodayBanners } from "./today-banners";
 import { TodayHeader } from "./today-header";
 import { TodaySkeleton } from "./today-skeleton";
-import { HabitSheet } from "./sheets/habit-sheet";
+import { useDay } from "./use-day";
 import { useQuickAction } from "./use-quick-action";
 import { useToday } from "./use-today";
+import { YesterdayView } from "./yesterday-view";
 
 export function TodayScreen() {
   const { state, refresh, run, actionError, clearActionError } = useToday();
   const [openRow, setOpenRow] = useState<{ habitId: string; date: string } | null>(null);
+  const [yesterdayDate, setYesterdayDate] = useState<string | null>(null);
+  const yesterday = useDay(yesterdayDate);
+  const online = useOnline();
   const quickAction = useQuickAction(run, (row, date) =>
     setOpenRow({ habitId: row.habit.id, date }),
   );
+
+  /** Mutations on yesterday refresh both views. */
+  const runAndReload = async (mutation: () => Promise<unknown>) => {
+    await run(mutation);
+    await yesterday.reload();
+  };
 
   if (state.status === "loading") return <TodaySkeleton />;
 
@@ -71,8 +86,39 @@ export function TodayScreen() {
     );
   }
 
+  const errorAlert = actionError ? (
+    <div
+      role="alert"
+      className="flex items-center justify-between gap-3 rounded-row border border-ember-line bg-ember-surface px-4 py-3 text-sm text-ember-soft"
+    >
+      {actionError}
+      <Button variant="ghost" onClick={clearActionError} className="text-ember-soft">
+        Dismiss
+      </Button>
+    </div>
+  ) : null;
+
+  if (yesterdayDate && yesterday.day) {
+    return (
+      <div className="flex flex-col gap-3">
+        {errorAlert}
+        <YesterdayView
+          day={yesterday.day}
+          run={runAndReload}
+          onBack={() => setYesterdayDate(null)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-[18px]">
+      {!online ? (
+        <p className="flex items-center gap-2 self-start rounded-full border border-line bg-surface-2 px-3 py-1.5 font-mono text-[11px] tracking-wider text-text-muted uppercase">
+          <CloudOff className="size-3.5" aria-hidden="true" />
+          Offline · saved on this device
+        </p>
+      ) : null}
       <TodayHeader
         date={view.day.date}
         dayNumber={view.day.dayNumber}
@@ -80,28 +126,27 @@ export function TodayScreen() {
         streak={view.streak}
       />
       <ChapterProgress chapters={view.chapters} current={view.currentChapter} />
+      <TodayBanners
+        banners={view.banners}
+        date={view.day.date}
+        threshold={view.arc.strongThreshold}
+        nowMs={new Date(view.now).getTime()}
+        onOpenYesterday={setYesterdayDate}
+      />
       <ScoreCard
         day={view.day}
         threshold={view.arc.strongThreshold}
         streak={view.streak}
         rank={view.rank.name}
       />
-      {actionError ? (
-        <div
-          role="alert"
-          className="flex items-center justify-between gap-3 rounded-row border border-ember-line bg-ember-surface px-4 py-3 text-sm text-ember-soft"
-        >
-          {actionError}
-          <Button variant="ghost" onClick={clearActionError} className="text-ember-soft">
-            Dismiss
-          </Button>
-        </div>
-      ) : null}
+      {errorAlert}
       <HabitList
         rows={view.day.habits}
         onOpen={(row) => setOpenRow({ habitId: row.habit.id, date: view.day.date })}
         onQuickAction={(row) => quickAction(row, view.day.date)}
       />
+      <SickDayButton day={view.day} sickDaysLeft={view.sickDaysLeft} run={run} />
+      <CloseDaySheet day={view.day} run={run} />
       <HabitSheet
         row={findRow(view.day.habits, openRow, view.day.date)}
         date={view.day.date}

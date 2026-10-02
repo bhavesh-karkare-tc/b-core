@@ -8,6 +8,7 @@ import { browserStore } from "./mock/store";
 export type * from "./types";
 export { DataError } from "./types";
 export { formatClock } from "./view-models";
+export { closeDayInputSchema } from "./schemas";
 export type { DemoState } from "./mock/api";
 export type { ScenarioId } from "./mock/scenarios";
 

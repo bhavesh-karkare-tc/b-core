@@ -284,6 +284,7 @@ export function buildTodayView(data: ArcData | null, now: Date): TodayView {
   return {
     kind: "active",
     arc: summary,
+    now: now.toISOString(),
     day,
     chapters,
     currentChapter:

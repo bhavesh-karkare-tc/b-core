@@ -30,7 +30,7 @@ Current sprint: **Sprint 2**
 - [x] Mock implementation with seeded October data (Day 23 scenario) persisted to localStorage
 - [x] Today screen: header, chapter progress, score ring, streak pill, habit rows for all 5 types
 - [x] Status sheet / count keypad / time entry / checklist interactions
-- [ ] Close the day sheet; banners: at risk, shielded, yesterday unlogged, sick day, broken
+- [x] Close the day sheet; banners: at risk, shielded, yesterday unlogged, sick day, broken
 - **Done when:** a full day can be logged on mock data and score/streak update live
 
 ### Sprint 3 · Setup flow (S01–S08)

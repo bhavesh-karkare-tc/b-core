@@ -29,6 +29,15 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | A7 | Chapters | One chapter per calendar month the arc touches. A 92-day arc starting 15 Oct gives Oct (17 days), Nov (30), Dec (31) and Jan (14). | `chapters.ts` |
 | A8 | No-minimum habits | A "minimum" logged on a no-minimum habit (e.g. No P) resolves to Missed. The UI should never offer it (TC19). | `status.ts` |
 | A9 | Edit window | Days before the arc start, after the arc end, or in the future (arc timezone) are not editable. The lock starts at 00:00 of Day 4 in the arc timezone. | `cutoff.ts` |
+| A10 | Today streak display | The streak pill and banners use days **before** today. Today joins the streak once it is final or when you close it ("Streak safe, 10 days" on the close-day summary), so a half-logged afternoon never shows "at risk". | `data/view-models.ts` |
+| A11 | "x of y done" on Today | x = habits logged Done; y = counted habits minus Rest, so a Sunday reads "x of 9". | `data/view-models.ts` |
+| A12 | Demo clock (Phase 1 only) | The mock layer pins "now" (default Fri 23 Oct 2026, 15:00, browser timezone). Demo controls and `?demo=<scenario>` switch scenario or move the clock. Time-habit "Log now" uses this clock, never the device clock (E3). | `data/mock/*` |
+
+## Open questions
+
+| ID | Question | Context |
+| --- | --- | --- |
+| Q1 | Bedtime habits logged after midnight | At 00:20 the arc's "today" has already rolled over, so tapping Phone Off on Today logs it for the new day. Today the user must open "Log yesterday" from the banner instead. Should a time habit's quick action log to the previous day between 00:00 and its minimum time (e.g. 00:30)? |
 
 ## Technical decisions
 
@@ -40,3 +49,5 @@ explicit; this file fills its gaps. Each entry names where it lives in code so t
 | T4 | Respect pnpm's minimum-release-age check | Pin to an older version (lucide-react 1.49.0) rather than bypass the supply-chain guard. |
 | T5 | Engine never reads the clock | ESLint blocks `Date.now`, an argument-less `new Date()`, `process`, `window`, `localStorage` and `fetch` in `arc-engine`. Every time-dependent function takes `now` and a timezone. |
 | T6 | Engine coverage gate is 100% (lines, branches, functions, statements) | This is the Sprint 1 "done when" condition, enforced in `packages/arc-engine/vitest.config.ts`. |
+| T7 | Today is a client component over the async data API | Mock data lives in localStorage. Signatures stay async, so Phase 2 swaps in Supabase without UI changes. |
+| T8 | Scroll padding for fixed and sticky chrome | Focused rows must not hide under the top bar, bottom tabs or the sticky "Close the day" bar (WCAG 2.4.11). Found in browser testing: a tap under the sticky bar closed the day. |
