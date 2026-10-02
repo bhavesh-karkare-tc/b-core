@@ -18,7 +18,7 @@ Current sprint: **Sprint 1**
 ### Sprint 1 · arc-engine (pure logic)
 - [x] Domain types (Arc, Chapter, Habit, HabitVersion, DayLog, HabitEntry, StreakState, BodyCheck)
 - [x] Status resolution per habit type incl. cutoff rules (count/time/checklist min vs target)
-- [ ] Daily score, strong day, weekly/chapter/arc totals, completion %
+- [x] Daily score, strong day, weekly/chapter/arc totals, completion %
 - [ ] Arc streak state machine (safe, at_risk, shielded, broken), shields, sick days
 - [ ] Habit streaks; rank from arc points; chapter generation (incl. mid-month start)
 - [ ] Edit window / cutoff helpers (timezone-aware, `now` injected)

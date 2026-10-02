@@ -177,3 +177,21 @@ export type BodyCheck = {
 };
 
 export type RankName = "Recruit" | "Fighter" | "Contender" | "Warrior" | "Champion" | "Legend";
+
+/** One evaluated day: resolved entries + score. */
+export type DayResult = {
+  date: ISODate;
+  entries: ResolvedEntry[];
+  /** 0–100, or null when nothing is counted (sick day). */
+  score: number | null;
+  isSick: boolean;
+  isStrong: boolean;
+  /** Counted and below the threshold. Sick days are neither strong nor weak. */
+  isWeak: boolean;
+  /** Every counted habit was Rest (E8). */
+  recoveryDay: boolean;
+  /** Some entry may still change before cutoff. */
+  provisional: boolean;
+};
+
+export type HeatLevel = 0 | 1 | 2 | 3 | 4 | "sick";
