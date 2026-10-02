@@ -23,6 +23,7 @@ export function HabitTypeFields({ draft, setDraft, error, locked }: Props) {
       htmlFor="habit-min-text"
       error={error("minimumText")}
       hint="The small version that still counts on a hard day."
+      locked={locked("minimumText")}
     >
       <Input
         id="habit-min-text"
@@ -75,7 +76,7 @@ export function HabitTypeFields({ draft, setDraft, error, locked }: Props) {
                 disabled={locked("target")}
               />
             </Field>
-            <Field label="Unit" htmlFor="habit-unit" error={error("unit")}>
+            <Field label="Unit" htmlFor="habit-unit" error={error("unit")} locked={locked("unit")}>
               <Input
                 id="habit-unit"
                 value={draft.unit}
@@ -84,7 +85,12 @@ export function HabitTypeFields({ draft, setDraft, error, locked }: Props) {
                 disabled={locked("unit")}
               />
             </Field>
-            <Field label="Quick-add step" htmlFor="habit-step" error={error("step")}>
+            <Field
+              label="Quick-add step"
+              htmlFor="habit-step"
+              error={error("step")}
+              locked={locked("step")}
+            >
               <Input
                 id="habit-step"
                 inputMode="numeric"
@@ -94,7 +100,12 @@ export function HabitTypeFields({ draft, setDraft, error, locked }: Props) {
               />
             </Field>
             {draft.minimum !== null ? (
-              <Field label="Minimum" htmlFor="habit-min" error={error("minimum")}>
+              <Field
+                label="Minimum"
+                htmlFor="habit-min"
+                error={error("minimum")}
+                locked={minimumLocked}
+              >
                 <Input
                   id="habit-min"
                   inputMode="numeric"
@@ -126,7 +137,12 @@ export function HabitTypeFields({ draft, setDraft, error, locked }: Props) {
               />
             </Field>
             {draft.minimum !== null ? (
-              <Field label="Minimum by" htmlFor="habit-time-min" error={error("minimum")}>
+              <Field
+                label="Minimum by"
+                htmlFor="habit-time-min"
+                error={error("minimum")}
+                locked={minimumLocked}
+              >
                 <Input
                   id="habit-time-min"
                   type="time"
@@ -165,7 +181,12 @@ export function HabitTypeFields({ draft, setDraft, error, locked }: Props) {
               />
             </Field>
             {draft.minimum !== null ? (
-              <Field label="Minimum ticked" htmlFor="habit-items-min" error={error("minimum")}>
+              <Field
+                label="Minimum ticked"
+                htmlFor="habit-items-min"
+                error={error("minimum")}
+                locked={minimumLocked}
+              >
                 <Input
                   id="habit-items-min"
                   inputMode="numeric"

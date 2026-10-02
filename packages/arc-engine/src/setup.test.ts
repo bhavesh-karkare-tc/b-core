@@ -3,6 +3,7 @@ import {
   canAddHabit,
   canChangeHabitList,
   clampHabitName,
+  HABIT_FIELDS,
   isHabitFieldEditable,
   isValidDuration,
   isValidStartDate,
@@ -149,6 +150,7 @@ describe("Day 3 lock (TC08)", () => {
 
   it("before lock every field and the habit list are editable", () => {
     const now = instantAt("2026-10-03", "20:00", tz);
+    expect(HABIT_FIELDS.every((f) => isHabitFieldEditable(f, arc, now))).toBe(true);
     expect(isHabitFieldEditable("target", arc, now)).toBe(true);
     expect(isHabitFieldEditable("type", arc, now)).toBe(true);
     expect(canChangeHabitList(arc, now)).toBe(true);

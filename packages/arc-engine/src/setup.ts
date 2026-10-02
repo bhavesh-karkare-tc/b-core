@@ -33,6 +33,21 @@ export type HabitField =
   | "items"
   | "schedule";
 
+/** Every editable habit field, in editor order. */
+export const HABIT_FIELDS: readonly HabitField[] = [
+  "name",
+  "reminderTime",
+  "minimumText",
+  "type",
+  "category",
+  "target",
+  "minimum",
+  "unit",
+  "step",
+  "items",
+  "schedule",
+];
+
 export type HabitIssue = { field: HabitField; message: string };
 
 /** Habit name as typed: input stops at 30 characters (TC04). */

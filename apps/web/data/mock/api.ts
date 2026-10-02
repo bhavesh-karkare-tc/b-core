@@ -5,6 +5,7 @@ import {
   canUseSickDay,
   editWindow,
   FIELDS_AFTER_LOCK,
+  HABIT_FIELDS,
   habitOn,
   isArcLocked,
   isHabitFieldEditable,
@@ -85,20 +86,6 @@ function defaultMakeId(prefix: string): string {
       : Math.random().toString(36).slice(2, 10);
   return `${prefix}-${Date.now().toString(36)}-${random}`;
 }
-
-const HABIT_FIELDS: readonly HabitField[] = [
-  "name",
-  "reminderTime",
-  "minimumText",
-  "type",
-  "category",
-  "target",
-  "minimum",
-  "unit",
-  "step",
-  "items",
-  "schedule",
-];
 
 /** Fields that differ between two versions of a habit (type change counts as "type"). */
 function changedFields(prev: Habit, next: HabitDraft): HabitField[] {

@@ -35,7 +35,7 @@ Current sprint: **Sprint 2**
 
 ### Sprint 3 · Setup flow (S01–S08)
 - [x] Intro, template, habit list + editor (validation 3–10, name ≤ 30), dates + threshold, My Why, body check, commitment
-- [ ] Countdown state for future start; lock after Day 3 in editor
+- [x] Countdown state for future start; lock after Day 3 in editor
 - **Done when:** a new arc can be created in under 3 minutes and lands on Today
 
 ### Sprint 4 · Tracker + Day Detail

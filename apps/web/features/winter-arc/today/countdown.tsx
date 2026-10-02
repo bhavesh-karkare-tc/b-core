@@ -1,5 +1,7 @@
+import { Button } from "@b-core/ui/components/button";
 import { Card, CardLabel } from "@b-core/ui/components/card";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import type { ArcSummary } from "@/data";
 import { shortDate } from "../lib/format";
 
@@ -41,7 +43,12 @@ export function Countdown({ arc, daysUntilStart, myWhy }: CountdownProps) {
             </li>
           ))}
         </ul>
-        <p className="text-sm text-text-muted">Logging opens on Day 1.</p>
+        <p className="text-sm text-text-muted">
+          Logging opens on Day 1. You can still change your habits until the end of Day 3.
+        </p>
+        <Button asChild variant="secondary" className="self-start">
+          <Link href="/winter-arc/settings">Edit habits</Link>
+        </Button>
       </Card>
     </div>
   );
