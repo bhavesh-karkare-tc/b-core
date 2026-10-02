@@ -13,10 +13,14 @@ import { useMediaQuery } from "../lib/use-media-query";
 import { FilterRow } from "./filter-row";
 import { HabitBars } from "./habit-bars";
 import { Heatmap } from "./heatmap";
+import { BodyMetrics } from "./body-metrics";
+import { CategoryBalance } from "./category-balance";
 import { InsightsPanel } from "./insights-panel";
+import { Panel } from "./panel";
 import { RankCard } from "./rank-card";
 import { StatTile } from "./stat-tile";
 import { StreakCard } from "./streak-card";
+import { TrendChart } from "./trend-chart";
 import { useDashboard } from "./use-dashboard";
 
 const fmt = new Intl.NumberFormat("en-US");
@@ -95,19 +99,72 @@ export function DashboardScreen() {
       ? `Arc · ${view.arc.durationDays} days`
       : (view.chapters.find((c) => view.filter.kind === "chapter" && c.index === view.filter.index)
           ?.label ?? "");
+  const threshold = view.arc.strongThreshold;
+
+  const heatmap = (
+    <Panel
+      title={`${scopeLabel} heatmap`}
+      action={
+        <Link
+          href="/winter-arc/tracker"
+          className="inline-flex min-h-tap items-center text-[13px] text-accent"
+        >
+          Open tracker
+        </Link>
+      }
+    >
+      <Heatmap
+        cells={view.heatmap}
+        layout={view.filter.kind === "arc" ? "weeks" : "calendar"}
+        onOpenDay={(d) => setParam("day", d)}
+      />
+    </Panel>
+  );
+  const habits = (
+    <Panel title="Habit completion · weakest first">
+      <HabitBars habits={view.habits} limit={wide || showAllHabits ? null : 4} />
+      {!wide && view.habits.length > 4 ? (
+        <Button variant="ghost" block onClick={() => setShowAllHabits(!showAllHabits)}>
+          {showAllHabits ? "Show fewer" : `Show all ${view.habits.length}`}
+        </Button>
+      ) : null}
+    </Panel>
+  );
+  const fix = (
+    <section aria-label="What to fix" className="flex flex-col gap-2.5">
+      <h2 className="flex min-h-tap items-center text-lg font-bold">What to fix this week</h2>
+      <InsightsPanel view={view} limit={wide || more ? undefined : 1} />
+    </section>
+  );
+  const trend = (
+    <Panel title={`Daily score · ${scopeLabel}`}>
+      <TrendChart points={view.trend} threshold={threshold} />
+    </Panel>
+  );
+  const categories = (
+    <Panel title="Category balance">
+      <CategoryBalance categories={view.categories} />
+    </Panel>
+  );
+  const body = (
+    <Panel title="Body metrics">
+      <BodyMetrics checks={view.bodyChecks} />
+    </Panel>
+  );
 
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-1">
         <p className="font-mono text-xs tracking-[0.16em] text-accent">
-          DAY {view.dayNumber} OF {view.arc.durationDays} · {Math.round(view.progress * 100)}%
+          {view.arc.name.toUpperCase()} · DAY {view.dayNumber} OF {view.arc.durationDays} ·{" "}
+          {Math.round(view.progress * 100)}%
         </p>
         <h1 className="text-[32px] leading-none font-extrabold tracking-tight lg:text-4xl">
           Dashboard
         </h1>
       </header>
 
-      <section aria-label="Where you stand" className="grid grid-cols-2 gap-2.5">
+      <section aria-label="Where you stand" className="grid grid-cols-2 gap-2.5 lg:grid-cols-6">
         <StatTile
           label="Today"
           value={avg(tiles.today.score)}
@@ -124,74 +181,61 @@ export function DashboardScreen() {
           value={avg(tiles.chapter.average)}
           sub={`${fmt.format(tiles.chapter.total)} / ${fmt.format(tiles.chapter.maxSoFar)}`}
         />
-        <StatTile
-          label="Strong days"
-          value={String(tiles.strongDays.count)}
-          sub={`of ${tiles.strongDays.finalised} finalised`}
-        />
+        {wide ? (
+          <StatTile
+            label="Arc avg"
+            value={avg(tiles.arc.average)}
+            sub={`${tiles.strongDays.count} strong of ${tiles.strongDays.finalised}`}
+          />
+        ) : (
+          <StatTile
+            label="Strong days"
+            value={String(tiles.strongDays.count)}
+            sub={`of ${tiles.strongDays.finalised} finalised`}
+          />
+        )}
         <StreakCard streak={view.streak} />
         <RankCard rank={view.rank} durationDays={view.arc.durationDays} />
       </section>
 
       <FilterRow chapters={view.chapters} filter={view.filter} onChange={setChosen} />
 
-      <div
-        className={cn("flex flex-col gap-5 transition-opacity", state.refreshing && "opacity-60")}
-      >
-        <section aria-labelledby="heatmap-heading" className="flex flex-col gap-2.5">
-          <div className="flex items-baseline justify-between">
-            <h2 id="heatmap-heading" className="text-lg font-bold">
-              {scopeLabel} heatmap
-            </h2>
-            <Link
-              href="/winter-arc/tracker"
-              className="inline-flex min-h-tap items-center text-[13px] text-accent"
-            >
-              Open tracker
-            </Link>
+      <div className={cn("transition-opacity", state.refreshing && "opacity-60")}>
+        {wide ? (
+          <div className="grid grid-cols-12 gap-5">
+            <div className="col-span-7">{heatmap}</div>
+            <div className="col-span-5">{fix}</div>
+            <div className="col-span-7">{trend}</div>
+            <div className="col-span-5">{habits}</div>
+            <div className="col-span-5">{categories}</div>
+            <div className="col-span-7">{body}</div>
           </div>
-          <div className="rounded-card border border-line bg-surface p-3">
-            <Heatmap
-              cells={view.heatmap}
-              layout={view.filter.kind === "arc" ? "weeks" : "calendar"}
-              onOpenDay={(d) => setParam("day", d)}
-            />
-          </div>
-        </section>
-
-        <section aria-labelledby="habits-heading" className="flex flex-col gap-2">
-          <h2 id="habits-heading" className="text-lg font-bold">
-            Weakest habits first
-          </h2>
-          <div className="rounded-card border border-line bg-surface p-2">
-            <HabitBars habits={view.habits} limit={showAllHabits ? null : 4} />
-            {view.habits.length > 4 ? (
-              <Button variant="ghost" block onClick={() => setShowAllHabits(!showAllHabits)}>
-                {showAllHabits ? "Show fewer" : `Show all ${view.habits.length}`}
-              </Button>
+        ) : (
+          <div className="flex flex-col gap-5">
+            {heatmap}
+            {habits}
+            {fix}
+            {more ? (
+              <>
+                {trend}
+                {categories}
+                {body}
+              </>
             ) : null}
+            <Button variant="secondary" block aria-expanded={more} onClick={() => setMore(!more)}>
+              {more ? "Fewer insights" : "More insights"}
+              <ChevronDown
+                className={cn("transition-transform", more && "rotate-180")}
+                aria-hidden="true"
+              />
+            </Button>
           </div>
-        </section>
-
-        <section aria-labelledby="fix-heading" className="flex flex-col gap-2">
-          <h2 id="fix-heading" className="text-lg font-bold">
-            Fix this week
-          </h2>
-          <InsightsPanel view={view} limit={more ? undefined : 1} />
-        </section>
-
-        <Button variant="secondary" block aria-expanded={more} onClick={() => setMore(!more)}>
-          {more ? "Fewer insights" : "More insights"}
-          <ChevronDown
-            className={cn("transition-transform", more && "rotate-180")}
-            aria-hidden="true"
-          />
-        </Button>
+        )}
       </div>
 
       <DayDetailSheet
         date={openDay && /^\d{4}-\d{2}-\d{2}$/.test(openDay) ? openDay : null}
-        threshold={view.arc.strongThreshold}
+        threshold={threshold}
         onClose={() => setParam("day", null)}
       />
     </div>

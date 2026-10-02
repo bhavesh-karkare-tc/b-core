@@ -45,50 +45,53 @@ export function Heatmap({ cells, layout, onOpenDay }: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div
-        className={cn("grid gap-1", layout === "weeks" && "grid-flow-col")}
-        style={
-          layout === "calendar"
-            ? { gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }
-            : { gridTemplateRows: "repeat(7, minmax(0, 1fr))", gridAutoColumns: "minmax(0, 1fr)" }
-        }
-      >
-        {layout === "calendar"
-          ? DAYS.map((d, i) => (
-              <span
-                key={i}
-                className="text-center font-mono text-[10px] text-text-faint"
-                aria-hidden="true"
+      <div className={cn(layout === "weeks" && "overflow-x-auto pb-1")}>
+        <div
+          className={cn("grid gap-1", layout === "weeks" && "w-max grid-flow-col")}
+          style={
+            layout === "calendar"
+              ? { gridTemplateColumns: "repeat(7, minmax(0, 1fr))" }
+              : // Whole arc: fixed cells, scrolls sideways on narrow screens.
+                { gridTemplateRows: "repeat(7, 1.375rem)", gridAutoColumns: "1.375rem" }
+          }
+        >
+          {layout === "calendar"
+            ? DAYS.map((d, i) => (
+                <span
+                  key={i}
+                  className="text-center font-mono text-[10px] text-text-faint"
+                  aria-hidden="true"
+                >
+                  {d}
+                </span>
+              ))
+            : null}
+          {slots.map((c, i) =>
+            c ? (
+              <button
+                key={c.date}
+                type="button"
+                disabled={c.level === "future" || !onOpenDay}
+                onClick={() => onOpenDay?.(c.date)}
+                onPointerEnter={() => setActive(c)}
+                onFocus={() => setActive(c)}
+                onPointerLeave={() => setActive(null)}
+                onBlur={() => setActive(null)}
+                aria-label={describe(c)}
+                aria-current={c.isToday ? "date" : undefined}
+                className={cn(
+                  "flex aspect-square items-center justify-center rounded-cell font-mono text-[10px] transition-[filter] hover:brightness-125 disabled:cursor-default disabled:hover:brightness-100",
+                  LEVEL_CLASS[c.level],
+                  c.isToday && "ring-2 ring-text ring-offset-1 ring-offset-surface",
+                )}
               >
-                {d}
-              </span>
-            ))
-          : null}
-        {slots.map((c, i) =>
-          c ? (
-            <button
-              key={c.date}
-              type="button"
-              disabled={c.level === "future" || !onOpenDay}
-              onClick={() => onOpenDay?.(c.date)}
-              onPointerEnter={() => setActive(c)}
-              onFocus={() => setActive(c)}
-              onPointerLeave={() => setActive(null)}
-              onBlur={() => setActive(null)}
-              aria-label={describe(c)}
-              aria-current={c.isToday ? "date" : undefined}
-              className={cn(
-                "flex aspect-square items-center justify-center rounded-cell font-mono text-[10px] transition-[filter] hover:brightness-125 disabled:cursor-default disabled:hover:brightness-100",
-                LEVEL_CLASS[c.level],
-                c.isToday && "ring-2 ring-text ring-offset-1 ring-offset-surface",
-              )}
-            >
-              {c.level === "sick" ? "S" : layout === "calendar" ? Number(c.date.slice(8)) : ""}
-            </button>
-          ) : (
-            <span key={`pad-${i}`} aria-hidden="true" />
-          ),
-        )}
+                {c.level === "sick" ? "S" : layout === "calendar" ? Number(c.date.slice(8)) : ""}
+              </button>
+            ) : (
+              <span key={`pad-${i}`} aria-hidden="true" />
+            ),
+          )}
+        </div>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-text-muted">
         <p aria-live="polite" className="min-h-4 font-mono">
