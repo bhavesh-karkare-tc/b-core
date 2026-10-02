@@ -9,7 +9,7 @@ Current sprint: **Sprint 0**
 - [x] Turborepo + pnpm monorepo: `apps/web`, `packages/arc-engine`, `packages/ui`, `packages/config`
 - [x] Next.js (App Router, TypeScript strict), ESLint, Prettier, Vitest wired into Turborepo tasks
 - [x] Tailwind preset in `packages/ui` with Night Ice tokens (see CLAUDE.md), fonts Archivo + JetBrains Mono via next/font
-- [ ] shadcn/ui init; base primitives: Button, Card, Chip, Input, Toggle, Progress, Sheet, Dialog
+- [x] shadcn/ui init; base primitives: Button, Card, Chip, Input, Toggle, Progress, Sheet, Dialog
 - [ ] B-Core app shell: web sidebar (Home, Winter Arc: Today/Tracker/Dashboard/Reports, Settings), header, responsive mobile bottom tabs
 - [ ] Routes stubbed: `/winter-arc/today|tracker|dashboard|reports|setup|settings`
 - [ ] GitHub Actions CI: lint, typecheck, test on push

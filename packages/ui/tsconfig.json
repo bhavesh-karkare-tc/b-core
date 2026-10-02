@@ -1,4 +1,9 @@
 {
   "extends": "@b-core/config/tsconfig/library.json",
+  "compilerOptions": {
+    "paths": {
+      "@b-core/ui/*": ["./src/*"]
+    }
+  },
   "include": ["src"]
 }

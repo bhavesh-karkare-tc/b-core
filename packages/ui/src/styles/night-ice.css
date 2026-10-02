@@ -7,6 +7,9 @@
  * Import after `@import "tailwindcss";` in the app's global stylesheet.
  */
 
+/* Enter/exit animations used by Sheet and Dialog. */
+@import "tw-animate-css";
+
 /* Scan shared components for class names (workspace packages live in node_modules). */
 @source "../";
 
