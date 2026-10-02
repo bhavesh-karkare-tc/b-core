@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Winter Arc — Dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0B0F14}
+a{color:#6CC7FF}a:hover{color:#A9DEFF}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #0B0F14; color: #E8EEF5; font-family: 'Archivo', 'Helvetica Neue', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 52px 20px 12px; flex-grow: 1; overflow: hidden">
+
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px; color: {{accent}}">DAY 23 OF 92 · 25%</div>
+<h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px">Dashboard</h1>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 16px; background: #121821; border: 1px solid #1F2A36">
+<span style="font-size: 12px; color: #93A1B2">{{t.label}}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 600">{{t.value}}</span>
+<span style="font-size: 12px; color: {{t.subColor}}">{{t.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 10px">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 16px; background: #1A120C; border: 1px solid #5C3418">
+<div style="display: flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-8z"></path></svg><span style="font-size: 12px; color: #FFB27D">Streak · safe</span></div>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 600; color: #FFD2B3">9 days</span>
+<span style="font-size: 12px; color: #C9A58C">Best 21 · 1 shield held</span>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 16px; background: #121821; border: 1px solid #1F2A36">
+<span style="font-size: 12px; color: #93A1B2">Rank</span>
+<span style="font-size: 22px; font-weight: 800; letter-spacing: 0.5px">FIGHTER</span>
+<div style="height: 6px; border-radius: 3px; background: #1F2A36; overflow: hidden"><div style="width: 66%; height: 6px; background: {{accent}}"></div></div>
+<span style="font-size: 12px; color: #93A1B2">860 pts to Contender</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: #121821; border: 1px solid #1F2A36">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: 15px; font-weight: 700">October heatmap</h2><a href="Tracker.dc.html" style="font-size: 12px; text-decoration: none">Open tracker</a></div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{week}}" as="w" hint-placeholder-count="7"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6B7A8C; text-align: center">{{w}}</span></sc-for>
+<sc-for list="{{heat}}" as="c" hint-placeholder-count="35"><div style="aspect-ratio: 1; border-radius: 6px; background: {{c.bg}}; border: {{c.border}}; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: {{c.color}}">{{c.t}}</div></sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 16px; background: #121821; border: 1px solid #1F2A36">
+<h2 style="margin: 0; font-size: 15px; font-weight: 700">Weakest habits first</h2>
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 5px">
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span>{{b.name}}</span><span style="font-family: 'JetBrains Mono', monospace; color: {{b.color}}">{{b.pct}}</span></div>
+<div style="height: 6px; border-radius: 3px; background: #1F2A36; overflow: hidden"><div style="height: 6px; width: {{b.pct}}; background: {{b.color}}"></div></div>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 14px; border-radius: 16px; background: #10202B; border: 1px solid #1E3A4E">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" style="flex-shrink: 0"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 14px; font-weight: 700">Fix this week</span><span style="font-size: 13px; color: #B8C7D6; line-height: 1.4">Saturdays average 61, 22 below your weekdays. Plan Saturday reading before noon.</span></div>
+</div>
+</div>
+
+<nav style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 8px 8px 24px; background: #0B0F14; border-top: 1px solid #1F2A36">
+<a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; text-decoration: none; color: #6B7A8C; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path></svg>Today</a>
+<a href="Tracker.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; text-decoration: none; color: #6B7A8C; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>Tracker</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; text-decoration: none; color: {{accent}}; font-size: 11px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Dashboard</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; text-decoration: none; color: #6B7A8C; font-size: 11px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h5"></path></svg>Reports</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#6CC7FF","options":["#6CC7FF","#8FE3CF","#B9A6FF","#E8EEF5"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#6CC7FF';
+    var lv = [4,3,3,2,4,3,1,3,4,2,3,-1,3,4,4,3,2,3,4,1,3,2,3];
+    var shades = ['#17212C', '#1E3A4E', '#2F5A75', '#4A8DB5', accent];
+    var heat = [];
+    for (var i = 0; i < 35; i++) {
+      var d = i - 2;
+      if (d < 1 || d > 31) { heat.push({ bg: 'transparent', border: 'none', t: '', color: '#6B7A8C' }); continue; }
+      if (d > 23) { heat.push({ bg: 'transparent', border: '1px dashed #2C3A4A', t: '', color: '#6B7A8C' }); continue; }
+      var l = lv[d - 1];
+      if (l < 0) { heat.push({ bg: '#17212C', border: 'none', t: 'S', color: '#93A1B2' }); continue; }
+      heat.push({ bg: shades[l], border: d === 23 ? '1.5px solid #E8EEF5' : 'none', t: '', color: '#0B0F14' });
+    }
+    return {
+      accent: accent,
+      tiles: [
+        { label: 'Today', value: '50', sub: 'so far', subColor: '#93A1B2' },
+        { label: 'This week', value: '82', sub: '+6 vs last week', subColor: '#8FE3CF' },
+        { label: 'October avg', value: '79', sub: '1,640 / 2,300', subColor: '#93A1B2' },
+        { label: 'Strong days', value: '17', sub: 'of 22 finalised', subColor: '#93A1B2' }
+      ],
+      week: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+      heat: heat,
+      bars: [
+        { name: 'Read 10 Pages', pct: '48%', color: '#FF8A3D' },
+        { name: '10k Steps Outside', pct: '55%', color: '#FF8A3D' },
+        { name: 'Phone Off by 12 AM', pct: '61%', color: accent },
+        { name: 'Top 3 Tasks Done', pct: '70%', color: accent }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
