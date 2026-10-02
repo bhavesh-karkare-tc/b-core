@@ -11,7 +11,7 @@ Current sprint: **Sprint 0**
 - [x] Tailwind preset in `packages/ui` with Night Ice tokens (see CLAUDE.md), fonts Archivo + JetBrains Mono via next/font
 - [x] shadcn/ui init; base primitives: Button, Card, Chip, Input, Toggle, Progress, Sheet, Dialog
 - [x] B-Core app shell: web sidebar (Home, Winter Arc: Today/Tracker/Dashboard/Reports, Settings), header, responsive mobile bottom tabs
-- [ ] Routes stubbed: `/winter-arc/today|tracker|dashboard|reports|setup|settings`
+- [x] Routes stubbed: `/winter-arc/today|tracker|dashboard|reports|setup|settings`
 - [ ] GitHub Actions CI: lint, typecheck, test on push
 - **Done when:** app runs locally, shell + empty pages render in Night Ice theme, CI green
 

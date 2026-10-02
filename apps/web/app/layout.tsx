@@ -4,7 +4,7 @@ import { archivo, jetbrainsMono } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "B-Core",
+  title: { default: "B-Core", template: "%s · B-Core" },
   description: "Modular self-improvement.",
 };
 
