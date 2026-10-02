@@ -1,2 +1,13 @@
 @import "tailwindcss";
 @import "@b-core/ui/styles/night-ice.css";
+
+/*
+ * Below lg the shell has a sticky top bar and fixed bottom tabs. Keep focused or
+ * scrolled-to elements clear of both (WCAG 2.4.11 Focus Not Obscured).
+ */
+@media (width < 64rem) {
+  html {
+    scroll-padding-top: 4rem;
+    scroll-padding-bottom: 6.5rem;
+  }
+}

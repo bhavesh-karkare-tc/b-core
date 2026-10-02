@@ -130,6 +130,21 @@ describe("logging", () => {
     });
   });
 
+  it("time quick action logs the demo clock time", async () => {
+    const a = api();
+    await a.loadScenario("day-1"); // pinned 08:00
+    await a.logTimeNow(TODAY, H.phoneOff);
+    // A1 night clock: 08:00 is after the 00:30 minimum → Missed.
+    expect((await active(a)).day.habits[2]).toMatchObject({
+      loggedTime: "08:00",
+      status: "missed",
+    });
+    await a.setDemoNow(new Date("2026-10-23T18:10:00Z").toISOString()); // 23:40 IST
+    await a.logTimeNow(TODAY, H.phoneOff);
+    expect((await active(a)).day.habits[2]).toMatchObject({ loggedTime: "23:40", status: "done" });
+    await expect(a.logTimeNow(TODAY, H.water)).rejects.toMatchObject({ code: "invalid_input" });
+  });
+
   it("session: done with duration", async () => {
     const a = api();
     await a.loadScenario("day-1");

@@ -7,6 +7,7 @@ import { browserStore } from "./mock/store";
 
 export type * from "./types";
 export { DataError } from "./types";
+export { formatClock } from "./view-models";
 export type { DemoState } from "./mock/api";
 export type { ScenarioId } from "./mock/scenarios";
 
@@ -21,6 +22,7 @@ export const getDay = api.getDay;
 export const getCloseDaySummary = api.getCloseDaySummary;
 export const logHabit = api.logHabit;
 export const setHabitValue = api.setHabitValue;
+export const logTimeNow = api.logTimeNow;
 export const setChecklistItem = api.setChecklistItem;
 export const closeDay = api.closeDay;
 export const markSickDay = api.markSickDay;

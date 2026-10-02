@@ -9,7 +9,8 @@ export function ChapterProgress({
   chapters: ChapterView[];
   current: number;
 }) {
-  const columns = chapters.map((c) => `${c.days}fr`).join(" ");
+  // A short first chapter (mid-month start) still needs room for "OCT · 1/9".
+  const columns = chapters.map((c) => `minmax(4.5rem, ${c.days}fr)`).join(" ");
   return (
     <div className="flex flex-col gap-1.5">
       <div className="grid gap-1" style={{ gridTemplateColumns: columns }} aria-hidden="true">
@@ -26,7 +27,7 @@ export function ChapterProgress({
         {chapters.map((c) => (
           <li
             key={c.index}
-            className={cn(c.index === current && "text-text")}
+            className={cn("whitespace-nowrap", c.index === current && "text-text")}
             aria-current={c.index === current ? "step" : undefined}
           >
             {c.index === current ? `${c.label} · ${c.elapsed}/${c.days}` : c.label}

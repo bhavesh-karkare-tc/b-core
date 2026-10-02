@@ -4,6 +4,7 @@ import {
   habitOn,
   isScheduled,
   localDate,
+  localTime,
   type Habit,
   type ISODate,
   type ManualStatus,
@@ -170,6 +171,20 @@ export function createMockApi({ store, timeZone }: Options) {
           clearsMissed && prev.status === "missed" && habit.type !== "session"
             ? "unlogged"
             : prev.status,
+      }));
+    },
+
+    /** Time habit quick action: log the current time (arc timezone, demo clock). */
+    async logTimeNow(date: ISODate, habitId: string): Promise<void> {
+      const { state, data, now } = current();
+      const habit = editableHabit(data, now, date, habitId);
+      if (habit.type !== "time")
+        throw new DataError("invalid_input", `${habit.name} is not a time habit.`);
+      const loggedTime = localTime(now, data.arc.timeZone);
+      upsertEntry(state, data, now, date, habitId, (prev) => ({
+        ...prev,
+        loggedTime,
+        status: prev.status === "missed" ? "unlogged" : prev.status,
       }));
     },
 

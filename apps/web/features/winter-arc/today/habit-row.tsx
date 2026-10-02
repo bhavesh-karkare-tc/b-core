@@ -50,7 +50,7 @@ export function HabitRow({ row, onOpen, onQuickAction }: HabitRowProps) {
           e.preventDefault();
           onOpen?.(row);
         }}
-        disabled={!onOpen}
+        disabled={!onOpen || !row.quickAction}
         className="flex min-h-tap min-w-0 flex-1 flex-col justify-center gap-1 rounded-control text-left disabled:cursor-default"
         aria-label={`${row.habit.name}: ${row.statusLabel}. ${row.meta}`}
       >
