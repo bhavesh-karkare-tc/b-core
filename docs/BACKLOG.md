@@ -38,6 +38,20 @@ Source: Figma page "3 · Web – Winter Arc". The layout pass itself is tracked 
 - [ ] **"Details" link** on Habit completion (Figma) — target not defined (habit detail? tracker?).
 - [ ] **Export CSV / PDF button** in the page header (Figma note, Phase 2).
 
+### W06 Reports
+- [ ] **Chart: this week vs last week** (7 bars + ghost bars). The weekly snapshot stores totals
+      only, not daily scores, so the chart needs the snapshot (engine `weeklySnapshot`) extended.
+- [ ] **Weekly challenge** row in Highlights ("Done · +150") — Phase 3 (no challenge data).
+- [ ] **Personal record** row in Highlights ("Longest Read streak: 5") — not in the snapshot yet.
+- [ ] **Arc report** in History ("1 Jan 12:00 · upcoming") — arc final report is Phase 3; the Arc
+      filter chip shows a short note for now.
+- [ ] Upcoming monthly review as its own History row (Figma: "October review · 1 Nov · upcoming").
+      Data gives only the next due date, shown as "Next report · upcoming".
+- [ ] History reflection badges don't refresh after saving a reflection in the right pane (they
+      update on the next page load).
+- [ ] Opening a report from `/reports` swaps page components, so the split view reloads; a
+      shared `reports/layout.tsx` would keep the History panel mounted.
+
 ### Shell (all web screens)
 - [ ] Sidebar: "Setup (first run)" item, "More modules (soon)" as a nav row, **Profile** link.
 - [ ] Web header: search field and avatar. No search or profile exists in Phase 1, so these are

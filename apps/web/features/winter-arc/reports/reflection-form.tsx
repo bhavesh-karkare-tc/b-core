@@ -12,10 +12,18 @@ type Props<K extends string> = {
   value: Record<K, string> | null;
   readOnly: boolean;
   onSave: (value: Record<K, string>) => Promise<string | null>;
+  /** Fields side by side (web weekly summary, W06). */
+  columns?: boolean;
 };
 
 /** One-line reflections. Shows saved answers with Edit; read-only for past arcs. */
-export function ReflectionForm<K extends string>({ fields, value, readOnly, onSave }: Props<K>) {
+export function ReflectionForm<K extends string>({
+  fields,
+  value,
+  readOnly,
+  onSave,
+  columns = false,
+}: Props<K>) {
   const empty = Object.fromEntries(fields.map((f) => [f.key, ""])) as Record<K, string>;
   const [editing, setEditing] = useState(value === null && !readOnly);
   const [draft, setDraft] = useState<Record<K, string>>(value ?? empty);
@@ -28,7 +36,7 @@ export function ReflectionForm<K extends string>({ fields, value, readOnly, onSa
     if (!shown) return <p className="text-sm text-text-muted">No reflection was written.</p>;
     return (
       <div className="flex flex-col gap-3">
-        <dl className="flex flex-col gap-3">
+        <dl className={columns ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3"}>
           {fields.map((f) => (
             <div key={f.key} className="flex flex-col gap-0.5">
               <dt className="font-mono text-[11px] tracking-[0.12em] text-text-faint uppercase">
@@ -61,22 +69,24 @@ export function ReflectionForm<K extends string>({ fields, value, readOnly, onSa
         });
       }}
     >
-      {fields.map((f) => (
-        <Field
-          key={f.key}
-          label={f.label}
-          htmlFor={`reflect-${f.key}`}
-          hint={`${draft[f.key].length}/140`}
-        >
-          <Input
-            id={`reflect-${f.key}`}
-            value={draft[f.key]}
-            maxLength={140}
-            placeholder={f.placeholder}
-            onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
-          />
-        </Field>
-      ))}
+      <div className={columns ? "grid grid-cols-2 gap-4" : "flex flex-col gap-3"}>
+        {fields.map((f) => (
+          <Field
+            key={f.key}
+            label={f.label}
+            htmlFor={`reflect-${f.key}`}
+            hint={`${draft[f.key].length}/140`}
+          >
+            <Input
+              id={`reflect-${f.key}`}
+              value={draft[f.key]}
+              maxLength={140}
+              placeholder={f.placeholder}
+              onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
+            />
+          </Field>
+        ))}
+      </div>
       {error ? (
         <p role="alert" className="text-sm text-ember">
           {error}

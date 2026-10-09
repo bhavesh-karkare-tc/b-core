@@ -3,28 +3,23 @@
 import { Button } from "@b-core/ui/components/button";
 import { FileText, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { EmptyPage } from "@/components/shell/empty-page";
-import { getReports, type ReportsView } from "@/data";
 import { PageHeader } from "@/components/shell/page-header";
 import { shortDate } from "../lib/format";
+import { useMediaQuery } from "../lib/use-media-query";
 import { ReportCard } from "./report-card";
-
-type State = { status: "loading" } | { status: "error" } | { status: "ready"; view: ReportsView };
+import { ReportsSplit } from "./reports-split";
+import { useReports } from "./use-reports";
 
 /** Report history (MASTER_DOC §11): current arc newest first, then past arcs (R14). */
 export function ReportsScreen() {
-  const [state, setState] = useState<State>({ status: "loading" });
+  const wide = useMediaQuery("(min-width: 64rem)");
+  return wide ? <ReportsSplit /> : <ReportsList />;
+}
 
-  useEffect(() => {
-    let active = true;
-    getReports()
-      .then((view) => active && setState({ status: "ready", view }))
-      .catch(() => active && setState({ status: "error" }));
-    return () => {
-      active = false;
-    };
-  }, []);
+/** Mobile: the list on its own page; each report opens /reports/[id]. */
+function ReportsList() {
+  const state = useReports();
 
   if (state.status === "loading") {
     return (

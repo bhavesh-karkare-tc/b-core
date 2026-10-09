@@ -60,7 +60,7 @@ Current sprint: **Phase 1 complete** — next: Phase 2 (Supabase), on request
 - [ ] W05 Day Detail as a 480 px right drawer
 - [ ] W07 Monthly review: tiles, habit totals table + chart left, body check/reflection right
 - [ ] W08 Settings: Arc and Notifications side by side
-- [ ] W06 Reports: history list left, selected report right
+- [x] W06 Reports: History panel (All/Weekly/Monthly/Arc) left, selected report right on `/reports` and `/reports/[id]`; weekly hero, highlights, reflection side by side. Chart and Phase 3 rows in BACKLOG
 - [ ] Shell: sidebar Setup (first run), More modules, Profile; header search + avatar (inactive placeholders)
 - [ ] W01 Setup: steps | habits | habit editor in three columns
 - **Done when:** every web screen matches the Figma web wireframes at 1440; mobile unchanged
