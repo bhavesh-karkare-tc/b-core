@@ -6,7 +6,8 @@ type TodayHeaderProps = {
   date: string;
   dayNumber: number;
   durationDays: number;
-  streak: StreakView;
+  /** Omitted on web, where the streak sits in the score card. */
+  streak?: StreakView;
 };
 
 export function TodayHeader({ date, dayNumber, durationDays, streak }: TodayHeaderProps) {
@@ -23,7 +24,7 @@ export function TodayHeader({ date, dayNumber, durationDays, streak }: TodayHead
           <span className="font-mono text-base text-text-muted">/ {durationDays}</span>
         </h1>
       </div>
-      <StreakPill streak={streak} />
+      {streak ? <StreakPill streak={streak} /> : null}
     </header>
   );
 }

@@ -1,6 +1,7 @@
 import type { DayView, RankName, StreakView } from "@/data";
 import { countWord } from "../lib/format";
 import { ScoreRing } from "./score-ring";
+import { StreakPill } from "./streak-pill";
 
 const fmt = new Intl.NumberFormat("en-US");
 
@@ -9,7 +10,7 @@ type ScoreCardProps = {
   threshold: number;
   streak: StreakView;
   rank: RankName;
-  /** Web (W02): arc progress bar and rank line under the ring. */
+  /** Web (W02): "Score" heading, streak pill beside the ring, arc progress and rank line below. */
   arc?: {
     dayNumber: number;
     durationDays: number;
@@ -32,6 +33,7 @@ export function ScoreCard({ day, threshold, streak, rank, arc }: ScoreCardProps)
       aria-label="Today's score"
       className="flex flex-col gap-4 rounded-card-lg border border-line bg-surface p-4 lg:p-5"
     >
+      {arc ? <h2 className="text-lg font-bold">Score</h2> : null}
       <div className="flex items-center gap-[18px]">
         <ScoreRing score={day.score} provisional={day.provisional} />
         <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -45,7 +47,9 @@ export function ScoreCard({ day, threshold, streak, rank, arc }: ScoreCardProps)
                 SHIELD ×{streak.shieldsHeld}
               </span>
             ) : null}
-            {arc ? null : (
+            {arc ? (
+              <StreakPill streak={streak} />
+            ) : (
               <span className="rounded-cell bg-surface-2 px-2 py-1 font-mono text-[11px] text-text-soft uppercase">
                 {rank}
               </span>

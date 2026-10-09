@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Today" };
 
 export default function TodayPage() {
   return (
-    <div className="mx-auto w-full max-w-xl">
+    <div className="mx-auto w-full max-w-xl lg:max-w-6xl">
       <TodayScreen />
     </div>
   );

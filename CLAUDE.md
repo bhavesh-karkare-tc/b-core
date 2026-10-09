@@ -12,6 +12,7 @@ later, so everything shared (shell, design tokens, UI components) must be module
 | Product requirements (all rules, data model, 50 test cases, edge cases E1–E20) | `docs/MASTER_DOC.md` |
 | Rules and assumptions not spelled out in the Master Doc (R*, A*, T*) | `docs/DECISIONS.md` |
 | Sprint plan and current status | `docs/SPRINT_PLAN.md` |
+| Missed / deferred / pending work (add to it whenever something is skipped) | `docs/BACKLOG.md` |
 | High-fidelity mockups (visual reference only, not production code) | `docs/design/mockups/*.dc.html` |
 | Low-fi wireframes (all 56 mobile + 8 web screens) | Figma: https://www.figma.com/design/tmfLgAFRgMXKhf9lDAY4IH |
 

@@ -1,3 +1,4 @@
+import { cn } from "@b-core/ui/lib/cn";
 import Link from "next/link";
 import { useId } from "react";
 import type { HabitRowView } from "@/data";
@@ -8,8 +9,8 @@ type HabitListProps = {
   title?: string;
   /** Show the "Edit" link to habit settings (Today only). */
   showEdit?: boolean;
-  /** Two columns on wide screens (web Today, W02). */
-  twoColumn?: boolean;
+  /** Wrap the list in a card (web Today, W02). */
+  card?: boolean;
   onOpen?: (row: HabitRowView) => void;
   onQuickAction?: (row: HabitRowView) => void;
 };
@@ -18,13 +19,19 @@ export function HabitList({
   rows,
   title = "Today's habits",
   showEdit = true,
-  twoColumn = false,
+  card = false,
   onOpen,
   onQuickAction,
 }: HabitListProps) {
   const headingId = useId();
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-3">
+    <section
+      aria-labelledby={headingId}
+      className={cn(
+        "flex flex-col gap-3",
+        card && "rounded-card-lg border border-line bg-surface p-5",
+      )}
+    >
       <div className="flex items-baseline justify-between">
         <h2 id={headingId} className="text-lg font-bold">
           {title}
@@ -34,11 +41,11 @@ export function HabitList({
             href="/winter-arc/settings"
             className="inline-flex min-h-tap items-center text-[13px] text-accent"
           >
-            Edit
+            {card ? "Edit habits" : "Edit"}
           </Link>
         ) : null}
       </div>
-      <ul className={twoColumn ? "grid gap-2 lg:grid-cols-2" : "flex flex-col gap-2"}>
+      <ul className="flex flex-col gap-2">
         {rows.map((row) => (
           <HabitRow key={row.habit.id} row={row} onOpen={onOpen} onQuickAction={onQuickAction} />
         ))}

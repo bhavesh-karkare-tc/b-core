@@ -133,7 +133,7 @@ export function TodayScreen() {
   const habits = (
     <HabitList
       rows={view.day.habits}
-      twoColumn={wide}
+      card={wide}
       onOpen={(row) => setOpenRow({ habitId: row.habit.id, date: view.day.date })}
       onQuickAction={(row) => quickAction(row, view.day.date)}
     />
@@ -152,9 +152,9 @@ export function TodayScreen() {
         date={view.day.date}
         dayNumber={view.day.dayNumber}
         durationDays={view.arc.durationDays}
-        streak={view.streak}
+        streak={wide ? undefined : view.streak}
       />
-      <ChapterProgress chapters={view.chapters} current={view.currentChapter} />
+      {wide ? null : <ChapterProgress chapters={view.chapters} current={view.currentChapter} />}
       {wide ? (
         <div className="grid grid-cols-[minmax(0,1fr)_380px] items-start gap-6">
           <div className="flex flex-col gap-[18px]">
