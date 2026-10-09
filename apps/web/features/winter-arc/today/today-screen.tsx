@@ -6,8 +6,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { EmptyPage } from "@/components/shell/empty-page";
 import type { HabitRowView } from "@/data";
+import { useMediaQuery } from "../lib/use-media-query";
 import { useOnline } from "../lib/use-online";
 import { ChapterProgress } from "./chapter-progress";
+import { CloseDayPanel } from "./close-day-panel";
 import { CloseDaySheet } from "./close-day-sheet";
 import { Countdown } from "./countdown";
 import { HabitList } from "./habit-list";
@@ -28,6 +30,7 @@ export function TodayScreen() {
   const [yesterdayDate, setYesterdayDate] = useState<string | null>(null);
   const yesterday = useDay(yesterdayDate);
   const online = useOnline();
+  const wide = useMediaQuery("(min-width: 64rem)");
   const quickAction = useQuickAction(run, (row, date) =>
     setOpenRow({ habitId: row.habit.id, date }),
   );
@@ -118,6 +121,25 @@ export function TodayScreen() {
     );
   }
 
+  const banners = (
+    <TodayBanners
+      banners={view.banners}
+      date={view.day.date}
+      threshold={view.arc.strongThreshold}
+      nowMs={new Date(view.now).getTime()}
+      onOpenYesterday={setYesterdayDate}
+    />
+  );
+  const habits = (
+    <HabitList
+      rows={view.day.habits}
+      twoColumn={wide}
+      onOpen={(row) => setOpenRow({ habitId: row.habit.id, date: view.day.date })}
+      onQuickAction={(row) => quickAction(row, view.day.date)}
+    />
+  );
+  const sickDay = <SickDayButton day={view.day} sickDaysLeft={view.sickDaysLeft} run={run} />;
+
   return (
     <div className="flex flex-col gap-[18px]">
       {!online ? (
@@ -133,27 +155,44 @@ export function TodayScreen() {
         streak={view.streak}
       />
       <ChapterProgress chapters={view.chapters} current={view.currentChapter} />
-      <TodayBanners
-        banners={view.banners}
-        date={view.day.date}
-        threshold={view.arc.strongThreshold}
-        nowMs={new Date(view.now).getTime()}
-        onOpenYesterday={setYesterdayDate}
-      />
-      <ScoreCard
-        day={view.day}
-        threshold={view.arc.strongThreshold}
-        streak={view.streak}
-        rank={view.rank.name}
-      />
-      {errorAlert}
-      <HabitList
-        rows={view.day.habits}
-        onOpen={(row) => setOpenRow({ habitId: row.habit.id, date: view.day.date })}
-        onQuickAction={(row) => quickAction(row, view.day.date)}
-      />
-      <SickDayButton day={view.day} sickDaysLeft={view.sickDaysLeft} run={run} />
-      <CloseDaySheet day={view.day} run={run} />
+      {wide ? (
+        <div className="grid grid-cols-[minmax(0,1fr)_380px] items-start gap-6">
+          <div className="flex flex-col gap-[18px]">
+            {banners}
+            {errorAlert}
+            {habits}
+            {sickDay}
+          </div>
+          <aside aria-label="Day summary" className="sticky top-6 flex flex-col gap-5">
+            <ScoreCard
+              day={view.day}
+              threshold={view.arc.strongThreshold}
+              streak={view.streak}
+              rank={view.rank.name}
+              arc={{
+                dayNumber: view.day.dayNumber,
+                durationDays: view.arc.durationDays,
+                next: view.rank.next,
+              }}
+            />
+            <CloseDayPanel day={view.day} run={run} />
+          </aside>
+        </div>
+      ) : (
+        <>
+          {banners}
+          <ScoreCard
+            day={view.day}
+            threshold={view.arc.strongThreshold}
+            streak={view.streak}
+            rank={view.rank.name}
+          />
+          {errorAlert}
+          {habits}
+          {sickDay}
+          <CloseDaySheet day={view.day} run={run} />
+        </>
+      )}
       <HabitSheet
         row={findRow(view.day.habits, openRow, view.day.date)}
         date={view.day.date}

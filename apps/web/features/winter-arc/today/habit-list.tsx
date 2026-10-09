@@ -8,6 +8,8 @@ type HabitListProps = {
   title?: string;
   /** Show the "Edit" link to habit settings (Today only). */
   showEdit?: boolean;
+  /** Two columns on wide screens (web Today, W02). */
+  twoColumn?: boolean;
   onOpen?: (row: HabitRowView) => void;
   onQuickAction?: (row: HabitRowView) => void;
 };
@@ -16,6 +18,7 @@ export function HabitList({
   rows,
   title = "Today's habits",
   showEdit = true,
+  twoColumn = false,
   onOpen,
   onQuickAction,
 }: HabitListProps) {
@@ -35,7 +38,7 @@ export function HabitList({
           </Link>
         ) : null}
       </div>
-      <ul className="flex flex-col gap-2">
+      <ul className={twoColumn ? "grid gap-2 lg:grid-cols-2" : "flex flex-col gap-2"}>
         {rows.map((row) => (
           <HabitRow key={row.habit.id} row={row} onOpen={onOpen} onQuickAction={onQuickAction} />
         ))}

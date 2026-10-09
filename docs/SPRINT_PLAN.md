@@ -53,6 +53,18 @@ Current sprint: **Phase 1 complete** — next: Phase 2 (Supabase), on request
 - [x] Notification settings (UI only), module settings, abandon arc dialog
 - **Done when:** all MVP screens (S01–S18) exist with their listed states on mock data
 
+### Sprint 7 · Web layouts from Figma (W01–W08)
+- [x] W02 Today: two columns — habits in a 2-col grid; score card (arc progress + rank) and Close the day panel on the right. Weekly challenge card deferred to Phase 3 (no data yet)
+- [ ] W04 Dashboard: filters on top, tiles, left heatmap/trend/categories, right habit bars/what to fix
+- [ ] W03 Tracker: single toolbar (chapters, legend, action), Score + Journal columns
+- [ ] W05 Day Detail as a 480 px right drawer
+- [ ] W07 Monthly review: tiles, habit totals table + chart left, body check/reflection right
+- [ ] W08 Settings: Arc and Notifications side by side
+- [ ] W06 Reports: history list left, selected report right
+- [ ] Shell: sidebar Setup (first run), More modules, Profile; header search + avatar (inactive placeholders)
+- [ ] W01 Setup: steps | habits | habit editor in three columns
+- **Done when:** every web screen matches the Figma web wireframes at 1440; mobile unchanged
+
 ## Phase 2 — Backend integration (Supabase)
 - [ ] Supabase project, Drizzle schema from Master Doc §14, RLS policies (user owns rows)
 - [ ] Auth (email magic link / Google)
