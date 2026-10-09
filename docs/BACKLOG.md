@@ -30,6 +30,14 @@ Source: Figma page "3 · Web – Winter Arc". The layout pass itself is tracked 
 - [ ] Web has no Week view (Figma W03 shows only the month table); Week view stays on mobile.
       Confirm that is intended.
 
+### W04 Dashboard
+- [ ] **Category filter chips** (Body / Mind / Discipline) in the filter row. MASTER_DOC §10 says web
+      filters "by chapter and category" and Category balance "tap filters habit list"; the Figma note
+      says "Filters apply to all widgets". Scope needs a decision before building (habit list only,
+      or per-category heatmap/trend — the latter needs new data).
+- [ ] **"Details" link** on Habit completion (Figma) — target not defined (habit detail? tracker?).
+- [ ] **Export CSV / PDF button** in the page header (Figma note, Phase 2).
+
 ### Shell (all web screens)
 - [ ] Sidebar: "Setup (first run)" item, "More modules (soon)" as a nav row, **Profile** link.
 - [ ] Web header: search field and avatar. No search or profile exists in Phase 1, so these are

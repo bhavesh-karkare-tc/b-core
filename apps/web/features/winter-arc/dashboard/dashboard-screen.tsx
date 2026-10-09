@@ -112,6 +112,7 @@ export function DashboardScreen() {
 
   const heatmap = (
     <Panel
+      inset={wide}
       title={`${scopeLabel} heatmap`}
       action={
         <Link
@@ -130,7 +131,7 @@ export function DashboardScreen() {
     </Panel>
   );
   const habits = (
-    <Panel title="Habit completion · weakest first">
+    <Panel inset={wide} title="Habit completion · weakest first">
       <HabitBars
         habits={view.habits}
         limit={wide || showAllHabits ? null : 4}
@@ -143,27 +144,33 @@ export function DashboardScreen() {
       ) : null}
     </Panel>
   );
-  const fix = (
+  const fix = wide ? (
+    <Panel inset title="What to fix this week">
+      <InsightsPanel view={view} plain />
+    </Panel>
+  ) : (
     <section aria-label="What to fix" className="flex flex-col gap-2.5">
       <h2 className="flex min-h-tap items-center text-lg font-bold">What to fix this week</h2>
-      <InsightsPanel view={view} limit={wide || more ? undefined : 1} />
+      <InsightsPanel view={view} limit={more ? undefined : 1} />
     </section>
   );
   const trend = (
-    <Panel title={`Daily score · ${scopeLabel}`}>
+    <Panel inset={wide} title={`Daily score · ${scopeLabel}`}>
       <TrendChart points={view.trend} threshold={threshold} />
     </Panel>
   );
   const categories = (
-    <Panel title="Category balance">
+    <Panel inset={wide} title="Category balance">
       <CategoryBalance categories={view.categories} />
     </Panel>
   );
   const body = (
-    <Panel title="Body metrics">
+    <Panel inset={wide} title="Body metrics">
       <BodyMetrics checks={view.bodyChecks} />
     </Panel>
   );
+
+  const filters = <FilterRow chapters={view.chapters} filter={view.filter} onChange={setChosen} />;
 
   return (
     <div className="flex flex-col gap-5">
@@ -176,6 +183,8 @@ export function DashboardScreen() {
           Dashboard
         </h1>
       </header>
+
+      {wide ? filters : null}
 
       <section aria-label="Where you stand" className="grid grid-cols-2 gap-2.5 lg:grid-cols-6">
         <StatTile
@@ -211,17 +220,23 @@ export function DashboardScreen() {
         <RankCard rank={view.rank} durationDays={view.arc.durationDays} />
       </section>
 
-      <FilterRow chapters={view.chapters} filter={view.filter} onChange={setChosen} />
+      {wide ? null : filters}
 
       <div className={cn("transition-opacity", state.refreshing && "opacity-60")}>
         {wide ? (
-          <div className="grid grid-cols-12 gap-5">
-            <div className="col-span-7">{heatmap}</div>
-            <div className="col-span-5">{fix}</div>
-            <div className="col-span-7">{trend}</div>
-            <div className="col-span-5">{habits}</div>
-            <div className="col-span-5">{categories}</div>
-            <div className="col-span-7">{body}</div>
+          <div className="grid grid-cols-12 items-start gap-6">
+            <div className="col-span-7 flex flex-col gap-6">
+              {heatmap}
+              {trend}
+              <div className="grid grid-cols-2 items-start gap-6">
+                {categories}
+                {body}
+              </div>
+            </div>
+            <div className="col-span-5 flex flex-col gap-6">
+              {habits}
+              {fix}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-5">
