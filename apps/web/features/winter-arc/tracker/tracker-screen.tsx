@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@b-core/ui/components/button";
-import { Flag, TriangleAlert } from "lucide-react";
+import { Flag, Printer, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import { shortDate } from "../lib/format";
 import { useMediaQuery } from "../lib/use-media-query";
 import { ChapterPills } from "./chapter-pills";
 import { MonthGrid } from "./month-grid";
+import { MonthTable } from "./month-table";
 import { TrackerHeader } from "./tracker-header";
 import { TrackerLegend } from "./tracker-legend";
 import { TrackerSkeleton } from "./tracker-skeleton";
@@ -89,13 +90,35 @@ export function TrackerScreen() {
   return (
     <div className="flex flex-col gap-3.5">
       <TrackerHeader view={view} />
-      <ChapterPills chapters={view.chapters} current={view.chapter.index} onSelect={setChapter} />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <TrackerLegend />
-        <div className="w-44">
-          <Segmented label="View" options={MODES} value={mode} onChange={setMode} />
+      {wide ? (
+        <div className="flex flex-wrap items-center gap-4">
+          <ChapterPills
+            chapters={view.chapters}
+            current={view.chapter.index}
+            onSelect={setChapter}
+          />
+          <TrackerLegend className="ml-auto" />
+          {/* Exports the A4 monthly sheet; arrives in Phase 2 (I11). */}
+          <Button variant="secondary" disabled title="Print sheet arrives in Phase 2">
+            <Printer aria-hidden="true" />
+            Print sheet
+          </Button>
         </div>
-      </div>
+      ) : (
+        <>
+          <ChapterPills
+            chapters={view.chapters}
+            current={view.chapter.index}
+            onSelect={setChapter}
+          />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <TrackerLegend />
+            <div className="w-44">
+              <Segmented label="View" options={MODES} value={mode} onChange={setMode} />
+            </div>
+          </div>
+        </>
+      )}
       {!view.chapter.started ? (
         <p
           role="status"
@@ -105,12 +128,18 @@ export function TrackerScreen() {
           already marked.
         </p>
       ) : null}
-      {mode === "month" ? (
+      {wide ? (
+        <MonthTable
+          columns={view.columns}
+          rows={view.rows}
+          threshold={view.arc.strongThreshold}
+          onOpenDay={setOpenDay}
+        />
+      ) : mode === "month" ? (
         <MonthGrid
           columns={view.columns}
           rows={view.rows}
           threshold={view.arc.strongThreshold}
-          wide={wide}
           onOpenDay={setOpenDay}
         />
       ) : currentWeek ? (

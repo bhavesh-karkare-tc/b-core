@@ -10,8 +10,6 @@ type Props = {
   threshold: number;
   /** Open Day Detail for a reached day. */
   onOpenDay?: (date: string) => void;
-  /** Wide layout: habit names in the header and a journal column. */
-  wide?: boolean;
 };
 
 function rowLabel(row: TrackerRow, columns: TrackerColumn[]): string {
@@ -27,11 +25,10 @@ function rowLabel(row: TrackerRow, columns: TrackerColumn[]): string {
 /**
  * Month grid (MASTER_DOC §13 #12): one row per day, one cell per habit, points.
  * Rows are 28 px (≥ 24 px WCAG AA target, decision T9); Week view gives 44 px targets.
+ * Mobile only; web uses MonthTable (W03).
  */
-export function MonthGrid({ columns, rows, threshold, onOpenDay, wide }: Props) {
-  const template = wide
-    ? `4rem repeat(${columns.length}, minmax(1.75rem, 1fr)) 2.75rem minmax(8rem, 1.5fr)`
-    : `3.25rem repeat(${columns.length}, minmax(0, 1fr)) 2.25rem`;
+export function MonthGrid({ columns, rows, threshold, onOpenDay }: Props) {
+  const template = `3.25rem repeat(${columns.length}, minmax(0, 1fr)) 2.25rem`;
 
   return (
     <div className="flex flex-col gap-[3px] rounded-card border border-line bg-surface p-2.5">
@@ -43,15 +40,10 @@ export function MonthGrid({ columns, rows, threshold, onOpenDay, wide }: Props) 
         <span>DAY</span>
         {columns.map((c) => (
           <span key={c.habitId} className="truncate text-center" title={c.name}>
-            {wide ? (
-              <span className="block truncate text-[10px] normal-case">{c.name}</span>
-            ) : (
-              c.number
-            )}
+            {c.number}
           </span>
         ))}
         <span className="text-right">PTS</span>
-        {wide ? <span className="pl-2">JOURNAL</span> : null}
       </div>
       <ol className="flex flex-col gap-[3px]">
         {rows.map((row) => {
@@ -100,14 +92,6 @@ export function MonthGrid({ columns, rows, threshold, onOpenDay, wide }: Props) 
                 >
                   {row.future ? "" : row.isSick ? "S" : (row.score ?? "–")}
                 </span>
-                {wide ? (
-                  <span
-                    className="truncate pl-2 text-xs text-text-muted"
-                    title={row.journal ?? undefined}
-                  >
-                    {row.journal ?? ""}
-                  </span>
-                ) : null}
               </button>
             </li>
           );

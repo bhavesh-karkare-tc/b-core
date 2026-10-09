@@ -21,6 +21,15 @@ Source: Figma page "3 · Web – Winter Arc". The layout pass itself is tracked 
 - [ ] Visual check against Figma screenshots — not possible on 2026-10-09 because the Figma MCP
       Starter plan call limit was hit; only layer data was compared.
 
+### W03 Tracker
+- [ ] **Click a cell = quick status menu** (Figma note), only for days still in the edit window.
+      Today the whole date opens Day Detail; single cells are not interactive yet.
+- [ ] **Print sheet**: export the A4 monthly sheet (Phase 2, I11). The button is shown disabled.
+- [ ] Short habit labels in the table header (Figma: "Water", "Phone Off", "Top 3"). Habits have no
+      short name in the data model, so long names wrap to two lines and clip ("Top 3 Tasks…").
+- [ ] Web has no Week view (Figma W03 shows only the month table); Week view stays on mobile.
+      Confirm that is intended.
+
 ### Shell (all web screens)
 - [ ] Sidebar: "Setup (first run)" item, "More modules (soon)" as a nav row, **Profile** link.
 - [ ] Web header: search field and avatar. No search or profile exists in Phase 1, so these are

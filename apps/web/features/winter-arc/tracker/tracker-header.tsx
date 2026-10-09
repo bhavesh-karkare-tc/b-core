@@ -12,7 +12,13 @@ export function TrackerHeader({ view }: Props) {
         <p className="font-mono text-xs tracking-[0.16em] text-accent uppercase">
           Chapter {chapter.index} · {chapter.label}
         </p>
-        <h1 className="text-[32px] leading-none font-extrabold tracking-tight">Tracker</h1>
+        <h1 className="text-[32px] leading-none font-extrabold tracking-tight">
+          Tracker
+          <span className="hidden lg:inline">
+            {" "}
+            · {chapter.label} {chapter.startDate.slice(0, 4)}
+          </span>
+        </h1>
       </div>
       <div className="flex flex-col items-end gap-0.5">
         <span className="font-mono text-lg font-semibold">{fmt.format(totals.total)}</span>

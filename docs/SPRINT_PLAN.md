@@ -56,7 +56,7 @@ Current sprint: **Phase 1 complete** — next: Phase 2 (Supabase), on request
 ### Sprint 7 · Web layouts from Figma (W01–W08)
 - [x] W02 Today: two columns — habits in a 2-col grid; score card (arc progress + rank) and Close the day panel on the right. Weekly challenge card deferred to Phase 3 (no data yet)
 - [ ] W04 Dashboard: filters on top, tiles, left heatmap/trend/categories, right habit bars/what to fix
-- [ ] W03 Tracker: single toolbar (chapters, legend, action), Score + Journal columns
+- [x] W03 Tracker: single toolbar (chapters, legend, Print sheet), month table with Score + Journal columns and week rules; cell quick menu and print in BACKLOG
 - [ ] W05 Day Detail as a 480 px right drawer
 - [ ] W07 Monthly review: tiles, habit totals table + chart left, body check/reflection right
 - [ ] W08 Settings: Arc and Notifications side by side
