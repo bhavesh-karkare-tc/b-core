@@ -38,6 +38,11 @@ Source: Figma page "3 · Web – Winter Arc". The layout pass itself is tracked 
 - [ ] **"Details" link** on Habit completion (Figma) — target not defined (habit detail? tracker?).
 - [ ] **Export CSV / PDF button** in the page header (Figma note, Phase 2).
 
+### W05 Day Detail drawer
+- [ ] **Journal input** at the bottom of the drawer (Figma). Saving a journal goes through
+      `closeDay`, which also marks the day closed; editing the journal from Day Detail needs its own
+      data call (or a rule that it closes the day). Journal is read-only in the drawer for now.
+
 ### W06 Reports
 - [ ] **Chart: this week vs last week** (7 bars + ghost bars). The weekly snapshot stores totals
       only, not daily scores, so the chart needs the snapshot (engine `weeklySnapshot`) extended.

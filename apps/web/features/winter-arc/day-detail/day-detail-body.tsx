@@ -8,7 +8,9 @@ import type { DayDetailView } from "@/data";
 import { STREAK_STATE_LABEL } from "../lib/format";
 import { streakEffectCopy } from "../lib/streak-copy";
 import { HabitList } from "../today/habit-list";
+import { ScoreRing } from "../today/score-ring";
 import { HabitSheet } from "../today/sheets/habit-sheet";
+import { StreakPill } from "../today/streak-pill";
 import { useQuickAction } from "../today/use-quick-action";
 
 type Props = {
@@ -17,12 +19,21 @@ type Props = {
   run: (mutation: () => Promise<unknown>) => Promise<void>;
   error: string | null;
   onDismissError: () => void;
+  /** Web drawer (W05): status box, compact ring with day verdict and streak pill. */
+  wide?: boolean;
 };
 
 const MOOD = ["", "Drained", "Low", "Okay", "Good", "Great"] as const;
 
 /** Day Detail content (MASTER_DOC §10, §13 #13): editable, locked or sick. */
-export function DayDetailBody({ view, threshold, run, error, onDismissError }: Props) {
+export function DayDetailBody({
+  view,
+  threshold,
+  run,
+  error,
+  onDismissError,
+  wide = false,
+}: Props) {
   const { day } = view;
   const [openId, setOpenId] = useState<string | null>(null);
   const quickAction = useQuickAction(run, (row) => setOpenId(row.habit.id));
@@ -35,50 +46,104 @@ export function DayDetailBody({ view, threshold, run, error, onDismissError }: P
       })
     : null;
 
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-3 gap-2 rounded-row border border-line bg-surface-2 p-3 text-center">
-        <div>
-          <p className="font-mono text-2xl font-semibold">{day.score ?? "—"}</p>
-          <p className="text-xs text-text-muted">score</p>
-        </div>
-        <div>
+  const unlogged = day.habits.filter((r) => r.status === "unlogged").length;
+  const verdict = day.isSick ? "Sick day" : day.isStrong ? "Strong day" : "Weak day";
+
+  const wideHead = (
+    <>
+      <p
+        role="status"
+        className="flex items-center gap-2 rounded-row border border-line bg-surface-2 px-4 py-3 text-sm"
+      >
+        {day.isSick ? (
+          <Thermometer className="size-4 text-text-muted" aria-hidden="true" />
+        ) : closes ? (
+          <PencilLine className="size-4 text-accent" aria-hidden="true" />
+        ) : (
+          <Lock className="size-4 text-text-muted" aria-hidden="true" />
+        )}
+        {day.isSick
+          ? "Sick day. Score not counted, streak frozen."
+          : closes
+            ? `Editable until ${closes}${unlogged > 0 ? ` · ${unlogged} ${unlogged === 1 ? "habit" : "habits"} unlogged` : ""}`
+            : "Locked. Logs close at noon the next day."}
+      </p>
+      <section aria-label="Day score" className="flex items-center gap-4">
+        <ScoreRing
+          score={day.score}
+          provisional={day.editWindow.editable}
+          compact
+        />
+        <div className="flex min-w-0 flex-col items-start gap-2">
           <p
             className={cn(
-              "font-mono text-2xl font-semibold",
+              "font-semibold",
               day.isSick ? "text-text-muted" : day.isStrong ? "text-accent" : "text-ember",
             )}
           >
-            {day.isSick ? "Sick" : day.isStrong ? "Strong" : "Weak"}
+            {verdict}
+            {day.score === null ? "" : ` · ${day.score}`}
+            <span className="font-normal text-text-muted"> (strong at {threshold})</span>
           </p>
-          <p className="text-xs text-text-muted">at {threshold}</p>
-        </div>
-        <div>
-          <p className="font-mono text-2xl font-semibold">{view.streakAfter.current}</p>
-          <p className="text-xs text-text-muted">
-            streak · {STREAK_STATE_LABEL[view.streakAfter.state]}
+          <StreakPill streak={view.streakAfter} />
+          <p className="text-[13px] text-text-muted">
+            {streakEffectCopy(view.streakEffect, view.streakAfter.current)}
           </p>
         </div>
-        <p className="col-span-3 text-sm font-semibold">
-          {streakEffectCopy(view.streakEffect, view.streakAfter.current)}
-        </p>
-      </div>
+      </section>
+    </>
+  );
 
-      {day.isSick ? (
-        <p role="status" className="flex items-center gap-2 text-sm text-text-muted">
-          <Thermometer className="size-4" aria-hidden="true" />
-          Sick day. Score not counted, streak frozen.
-        </p>
-      ) : closes ? (
-        <p role="status" className="flex items-center gap-2 text-sm text-accent">
-          <PencilLine className="size-4" aria-hidden="true" />
-          Editable until {closes}.
-        </p>
+  return (
+    <div className="flex flex-col gap-4">
+      {wide ? (
+        wideHead
       ) : (
-        <p role="status" className="flex items-center gap-2 text-sm text-text-muted">
-          <Lock className="size-4" aria-hidden="true" />
-          Locked. Logs close at noon the next day.
-        </p>
+        <>
+          <div className="grid grid-cols-3 gap-2 rounded-row border border-line bg-surface-2 p-3 text-center">
+            <div>
+              <p className="font-mono text-2xl font-semibold">{day.score ?? "—"}</p>
+              <p className="text-xs text-text-muted">score</p>
+            </div>
+            <div>
+              <p
+                className={cn(
+                  "font-mono text-2xl font-semibold",
+                  day.isSick ? "text-text-muted" : day.isStrong ? "text-accent" : "text-ember",
+                )}
+              >
+                {day.isSick ? "Sick" : day.isStrong ? "Strong" : "Weak"}
+              </p>
+              <p className="text-xs text-text-muted">at {threshold}</p>
+            </div>
+            <div>
+              <p className="font-mono text-2xl font-semibold">{view.streakAfter.current}</p>
+              <p className="text-xs text-text-muted">
+                streak · {STREAK_STATE_LABEL[view.streakAfter.state]}
+              </p>
+            </div>
+            <p className="col-span-3 text-sm font-semibold">
+              {streakEffectCopy(view.streakEffect, view.streakAfter.current)}
+            </p>
+          </div>
+
+          {day.isSick ? (
+            <p role="status" className="flex items-center gap-2 text-sm text-text-muted">
+              <Thermometer className="size-4" aria-hidden="true" />
+              Sick day. Score not counted, streak frozen.
+            </p>
+          ) : closes ? (
+            <p role="status" className="flex items-center gap-2 text-sm text-accent">
+              <PencilLine className="size-4" aria-hidden="true" />
+              Editable until {closes}.
+            </p>
+          ) : (
+            <p role="status" className="flex items-center gap-2 text-sm text-text-muted">
+              <Lock className="size-4" aria-hidden="true" />
+              Locked. Logs close at noon the next day.
+            </p>
+          )}
+        </>
       )}
 
       {error ? (
