@@ -66,6 +66,14 @@ Source: Figma page "3 · Web – Winter Arc". The layout pass itself is tracked 
 - [ ] Body check card title "Day 1 → Day 31" and "72.5 → 70.9 kg" style rows (Figma); ours is a
       Start / End / Change table.
 
+### W08 Settings
+- [ ] **Export data** row ("CSV · Phase 2") in the Arc card.
+- [ ] Figma's left column is one compact "Arc" card of rows (Habits "10 · locked since Day 3 ·
+      Edit names ›", My Why "Edit ›", threshold, timezone "Change ›", sick days, export). Ours keeps
+      the full habit list, threshold slider and My Why editor inline. Decide whether to collapse
+      them into rows that open editors.
+- [ ] Timezone "Change ›" — switching arrives in Phase 2 (DECISIONS R13).
+
 ### Shell (all web screens)
 - [ ] Sidebar: "Setup (first run)" item, "More modules (soon)" as a nav row, **Profile** link.
 - [ ] Web header: search field and avatar. No search or profile exists in Phase 1, so these are

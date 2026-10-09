@@ -16,10 +16,15 @@ import { PageHeader } from "@/components/shell/page-header";
 import { Field } from "../habits/field";
 import { Switch } from "./switch";
 
-/** Notification settings (screen #18). UI only in Phase 1: delivery arrives with sync. */
-export function NotificationSettingsScreen() {
+/**
+ * Notification settings (screen #18). UI only in Phase 1: delivery arrives with sync.
+ * `embedded`: shown as a card beside Arc settings on web (W08) instead of its own page.
+ */
+export function NotificationSettingsScreen({ embedded = false }: { embedded?: boolean }) {
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  // Section headings sit under the card's h2 when embedded.
+  const Sub = embedded ? "h3" : "h2";
 
   useEffect(() => {
     let active = true;
@@ -41,14 +46,20 @@ export function NotificationSettingsScreen() {
 
   return (
     <div className="flex flex-col gap-5">
-      <Link
-        href="/winter-arc/settings"
-        className="inline-flex min-h-tap items-center gap-1.5 self-start text-sm text-accent"
-      >
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        Arc settings
-      </Link>
-      <PageHeader eyebrow="Winter Arc" title="Notifications" />
+      {embedded ? (
+        <h2 className="text-lg font-bold">Notifications</h2>
+      ) : (
+        <>
+          <Link
+            href="/winter-arc/settings"
+            className="inline-flex min-h-tap items-center gap-1.5 self-start text-sm text-accent"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Arc settings
+          </Link>
+          <PageHeader eyebrow="Winter Arc" title="Notifications" />
+        </>
+      )}
       <p className="rounded-row border border-line bg-surface p-3 text-sm text-text-muted">
         Choose what you want to hear about. Delivery arrives with sync; these choices are saved now.
       </p>
@@ -66,7 +77,7 @@ export function NotificationSettingsScreen() {
                     </span>
                   </div>
                   {t.time !== null && !info.phase2 ? (
-                    <label className="w-28">
+                    <label className="w-36">
                       <span className="sr-only">{info.label} time</span>
                       <Input
                         type="time"
@@ -104,9 +115,9 @@ export function NotificationSettingsScreen() {
             aria-labelledby="quiet-heading"
             className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4"
           >
-            <h2 id="quiet-heading" className="font-semibold">
+            <Sub id="quiet-heading" className="font-semibold">
               Quiet hours
-            </h2>
+            </Sub>
             <p className="text-xs text-text-muted">
               Nothing is sent in this window, except habit reminders you set inside it (e.g. Phone
               Off by 12 AM).
@@ -146,9 +157,9 @@ export function NotificationSettingsScreen() {
             aria-labelledby="cap-heading"
             className="flex flex-col gap-3 rounded-card border border-line bg-surface p-4"
           >
-            <h2 id="cap-heading" className="font-semibold">
+            <Sub id="cap-heading" className="font-semibold">
               Daily limit
-            </h2>
+            </Sub>
             <p className="text-xs text-text-muted">
               At most this many a day. When there are more, streak at risk goes first, then the
               cutoff warning, then habit reminders.

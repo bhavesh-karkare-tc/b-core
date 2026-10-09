@@ -29,15 +29,15 @@ export function Switch({ checked, onChange, label, disabled }: SwitchProps) {
       </span>
       <span
         className={cn(
-          "relative h-6 w-11 rounded-full border transition-colors",
+          "relative block h-6 w-11 shrink-0 rounded-full border transition-colors",
           checked ? "border-accent bg-accent-2" : "border-line-strong bg-surface-2",
         )}
         aria-hidden="true"
       >
         <span
           className={cn(
-            "absolute top-0.5 size-[18px] rounded-full transition-transform",
-            checked ? "translate-x-[22px] bg-accent" : "translate-x-0.5 bg-text-faint",
+            "absolute top-0.5 left-0.5 block size-[18px] rounded-full transition-transform",
+            checked ? "translate-x-5 bg-accent" : "translate-x-0 bg-text-faint",
           )}
         />
       </span>

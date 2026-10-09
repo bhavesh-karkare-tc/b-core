@@ -141,9 +141,10 @@ export function ArcSettings() {
         ) : null}
       </section>
 
+      {/* Web shows Notifications beside this column (W08); mobile links to its own page. */}
       <Link
         href="/winter-arc/settings/notifications"
-        className="flex min-h-tap items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 hover:border-line-strong"
+        className="flex min-h-tap items-center gap-3 rounded-card border border-line bg-surface px-4 py-3 hover:border-line-strong lg:hidden"
       >
         <Bell className="size-5 text-accent" aria-hidden="true" />
         <span className="flex flex-1 flex-col">

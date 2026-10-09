@@ -59,7 +59,7 @@ Current sprint: **Phase 1 complete** — next: Phase 2 (Supabase), on request
 - [x] W03 Tracker: single toolbar (chapters, legend, Print sheet), month table with Score + Journal columns and week rules; cell quick menu and print in BACKLOG
 - [x] W05 Day Detail as a 480 px right drawer: one-line title, status box with unlogged count, compact ring + verdict + streak pill. Journal input in BACKLOG
 - [x] W07 Monthly review: full page on web (not the split pane), tiles, habit-wise totals + day-of-week pattern left, body check, reflection, Export/Print (disabled) right
-- [ ] W08 Settings: Arc and Notifications side by side
+- [x] W08 Settings: Arc (habits, arc facts, threshold, My Why, abandon) and Notifications side by side on web; switch thumb and time-input width fixed. Compact Arc card and export in BACKLOG
 - [x] W06 Reports: History panel (All/Weekly/Monthly/Arc) left, selected report right on `/reports` and `/reports/[id]`; weekly hero, highlights, reflection side by side. Chart and Phase 3 rows in BACKLOG
 - [ ] Shell: sidebar Setup (first run), More modules, Profile; header search + avatar (inactive placeholders)
 - [ ] W01 Setup: steps | habits | habit editor in three columns
