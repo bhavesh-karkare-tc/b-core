@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@b-core/ui/components/button";
-import { FileText, TriangleAlert } from "lucide-react";
+import { ArrowLeft, FileText, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { EmptyPage } from "@/components/shell/empty-page";
 import { PageHeader } from "@/components/shell/page-header";
@@ -41,8 +41,35 @@ export function ReportsSplit({ selectedId }: { selectedId?: string }) {
   }
 
   const { view } = state;
+  const current = view.current?.reports ?? [];
+  const all = [...current, ...view.past.flatMap((p) => p.reports)];
+
+  // Figma W07: a monthly review is a full page (wide habit table), not the right pane.
+  if (all.find((r) => r.id === selectedId)?.type === "monthly" && selectedId) {
+    return (
+      <ReportDetail
+        id={selectedId}
+        wide
+        back={
+          <Link
+            href="/winter-arc/reports"
+            className="inline-flex min-h-tap items-center gap-1.5 self-start text-sm text-accent"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            All reports
+          </Link>
+        }
+      />
+    );
+  }
+
+  // Default to the newest weekly summary, so /reports always shows the split view.
   const selected =
-    selectedId ?? view.current?.reports[0]?.id ?? view.past[0]?.reports[0]?.id ?? null;
+    selectedId ??
+    current.find((r) => r.type === "weekly")?.id ??
+    current[0]?.id ??
+    all[0]?.id ??
+    null;
 
   return (
     <div className="flex flex-col gap-6">

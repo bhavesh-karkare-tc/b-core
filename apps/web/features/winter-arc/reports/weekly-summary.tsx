@@ -2,6 +2,7 @@
 
 import { DataError, saveReflection, type ReportDetailView, type WeeklyReflection } from "@/data";
 import { STREAK_STATE_LABEL } from "../lib/format";
+import { notifyDataChanged } from "../lib/data-events";
 import { ReflectionForm } from "./reflection-form";
 import { ReportStat } from "./report-stat";
 
@@ -55,6 +56,7 @@ export function WeeklySummary({ report, readOnly, wide = false, heading }: Props
         onSave={async (value) => {
           try {
             await saveReflection(report.id, value);
+            notifyDataChanged();
             return null;
           } catch (e) {
             return e instanceof DataError ? e.message : "Could not save. Try again.";

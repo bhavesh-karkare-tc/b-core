@@ -3,7 +3,8 @@
 Every MVP screen from `docs/MASTER_DOC.md` §13 (screens 1–18) and each state it lists, with how to reach it
 on mock data. Load a demo scenario with `?demo=<id>` on any Winter Arc page (or **Demo controls** at the bottom
 of the page); scenario ids are in `apps/web/data/mock/scenarios.ts`. "Clock" means moving the pinned demo
-clock in Demo controls.
+clock in Demo controls, or `?clock=<ISO instant>` in the URL (e.g. `?clock=2026-11-01T12:30:00%2B05:30`
+opens the October review).
 
 Last verified: Sprint 6, in Chrome at 390 px and 1440 px, no console errors.
 

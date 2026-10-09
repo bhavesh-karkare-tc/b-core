@@ -5,9 +5,14 @@ import { useEffect } from "react";
 import { demo, type ScenarioId } from "@/data";
 import { notifyDataChanged } from "../lib/data-events";
 
-/** `?demo=<scenario>` loads a demo scenario once (shareable demo links, screenshots). Mock only. */
+/**
+ * `?demo=<scenario>` loads a demo scenario once and `?clock=<ISO instant>` (e.g.
+ * 2026-11-01T12:00:00+05:30) pins the demo clock — shareable demo links, screenshots. Mock only.
+ */
 export function DemoUrlLoader() {
-  const scenario = useSearchParams().get("demo");
+  const params = useSearchParams();
+  const scenario = params.get("demo");
+  const clock = params.get("clock");
 
   useEffect(() => {
     if (!scenario) return;
@@ -17,6 +22,11 @@ export function DemoUrlLoader() {
       notifyDataChanged();
     });
   }, [scenario]);
+
+  useEffect(() => {
+    if (!clock || Number.isNaN(Date.parse(clock))) return;
+    void demo.setNow(new Date(clock).toISOString()).then(notifyDataChanged);
+  }, [clock]);
 
   return null;
 }

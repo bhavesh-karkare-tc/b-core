@@ -47,10 +47,19 @@ Source: Figma page "3 · Web – Winter Arc". The layout pass itself is tracked 
       filter chip shows a short note for now.
 - [ ] Upcoming monthly review as its own History row (Figma: "October review · 1 Nov · upcoming").
       Data gives only the next due date, shown as "Next report · upcoming".
-- [ ] History reflection badges don't refresh after saving a reflection in the right pane (they
-      update on the next page load).
+- [x] History reflection badges don't refresh after saving a reflection in the right pane — fixed:
+      reports now listen to data-change events (also refreshes on demo scenario / clock changes).
 - [ ] Opening a report from `/reports` swaps page components, so the split view reloads; a
       shared `reports/layout.tsx` would keep the History panel mounted.
+
+### W07 Monthly review
+- [ ] **Badges** tile ("2 earned") — badges are Phase 3.
+- [ ] **Sick days** tile ("1 of 3 used") — the monthly snapshot has no sick-day count yet.
+- [ ] **Chart: day-of-week pattern** (avg score Mon–Sun). The snapshot keeps only the weakest
+      weekday; the chart needs all seven averages. The text pattern card is shown for now.
+- [ ] **Export PDF / Print monthly sheet** (Phase 2). Buttons are shown disabled.
+- [ ] Body check card title "Day 1 → Day 31" and "72.5 → 70.9 kg" style rows (Figma); ours is a
+      Start / End / Change table.
 
 ### Shell (all web screens)
 - [ ] Sidebar: "Setup (first run)" item, "More modules (soon)" as a nav row, **Profile** link.

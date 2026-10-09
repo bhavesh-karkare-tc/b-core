@@ -4,6 +4,7 @@ import { FileX } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { EmptyPage } from "@/components/shell/empty-page";
 import { getReport, type ReportDetailView } from "@/data";
+import { onDataChanged } from "../lib/data-events";
 import { shortDate } from "../lib/format";
 import { MonthlyReview } from "./monthly-review";
 import { WeeklySummary } from "./weekly-summary";
@@ -30,11 +31,15 @@ export function ReportDetail({ id, back, wide = false }: Props) {
 
   useEffect(() => {
     let active = true;
-    void getReport(id).then(
-      (view) => active && setState(view ? { status: "ready", view } : { status: "missing" }),
-    );
+    const load = () =>
+      void getReport(id).then(
+        (view) => active && setState(view ? { status: "ready", view } : { status: "missing" }),
+      );
+    load();
+    const off = onDataChanged(load);
     return () => {
       active = false;
+      off();
     };
   }, [id]);
 
@@ -99,7 +104,7 @@ export function ReportDetail({ id, back, wide = false }: Props) {
       {report.type === "weekly" ? (
         <WeeklySummary report={report} readOnly={view.readOnly} />
       ) : (
-        <MonthlyReview view={view} report={report} onChange={reload} />
+        <MonthlyReview view={view} report={report} onChange={reload} wide={wide} />
       )}
     </div>
   );
